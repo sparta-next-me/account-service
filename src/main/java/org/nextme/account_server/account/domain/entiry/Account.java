@@ -16,31 +16,40 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account extends BaseEntity {
+
     @EmbeddedId
+    // 계좌ID
     private AccountId id;
 
     @JoinColumn(nullable = false, name = "bank_id")
     @ManyToOne(fetch = FetchType.LAZY)
+    // 은행ID
     private Bank bank;
 
     @Column(nullable = false, name = "user_name")
+    // 유저이름
     private String userName;
 
     @Column(nullable = false, name = "client_id", unique = true)
+    //계좌유저ID
     private String clientId;
 
     @Column(nullable = false, name = "bank_account")
+    // 계좌번호
     private String bankAccount;
 
     @Column(nullable = false, name = "login_count")
     @ColumnDefault("0")
+    // 로그인횟수
     private int loginCount;
 
     @ColumnDefault("false")
     @Column(nullable = false)
+    // 계좌 상태
     private boolean locked;
 
     @Column(nullable = false, name = "user_id")
+    // 유저식별ID
     private UUID userId;
 
 
