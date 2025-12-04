@@ -63,7 +63,7 @@ public class AccountApi implements ApiAdapter {
                 }else{
                     // 계좌번호가 있는 배열 요소 접근
                     // 여러 계좌를 가져오기 때문에 지금은 제일 앞에 있는 계좌 연동으로 구현
-                    JsonNode resAccount = root.path("data").path("resDepositTrust").get(0).path("resAccountDisplay");
+                    JsonNode resAccount = root.path("data").path("resDepositTrust").get(0).path("resAccount");
                     String accountNumber = resAccount.asText();
                     // 계좌 연동 시 특정 계좌 선택하려면
 //                    List<String> accountList = new ArrayList<>();

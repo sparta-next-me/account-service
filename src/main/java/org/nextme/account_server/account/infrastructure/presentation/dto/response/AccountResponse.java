@@ -6,13 +6,13 @@ import org.nextme.account_server.account.domain.entiry.Account;
 
 @Builder
 
-public record AccountCreateResponse(
+public record AccountResponse(
         String userName,
         String accountNumber,
         String clientId
 ) {
-    public static AccountCreateResponse of(Account account) {
-        return AccountCreateResponse.builder()
+    public static AccountResponse of(Account account) {
+        return AccountResponse.builder()
                 .userName(account.getUserName())
                 .clientId(account.getClientId())
                 .accountNumber(account.getBankAccount())
