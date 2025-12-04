@@ -3,7 +3,9 @@ package org.nextme.account_server.account.infrastructure.presentation.controller
 import lombok.RequiredArgsConstructor;
 import org.nextme.account_server.account.application.account.service.AccountService;
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountRequest;
+import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountSelectRequest;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountResponse;
+import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountSelectResponse;
 import org.nextme.account_server.global.infrastructure.success.CustomResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,11 +28,15 @@ public class AccountController {
 
     // 본인 계좌 전체 조회
     @GetMapping()
-    public ResponseEntity<CustomResponse<List<AccountResponse>>> getAccount(@RequestBody String clientId) {
-        List<AccountResponse> accountResponse = accountService.getAll(clientId);
-        return ResponseEntity.ok(CustomResponse.onSuccess("계정 조회 되었습니다.",accountResponse));
+    public ResponseEntity<CustomResponse<List<AccountSelectResponse>>> getAccount(@RequestBody String clientId) {
+        List<AccountSelectResponse> accountResponse = accountService.getAll(clientId);
+        return ResponseEntity.ok(CustomResponse.onSuccess("계좌 조회 되었습니다.",accountResponse));
     }
 
-    // 계좌 단건 조회
-//    @GetMapping("/{id}")
+    // 계좌 단건(조건: 아이디, 계좌번호) 조회
+    @GetMapping("/condition")
+    public ResponseEntity<CustomResponse<AccountSelectResponse>> getAccount(@RequestBody AccountSelectRequest accountSelectRequest) {
+        AccountSelectResponse accountResponse = accountService.getCondition(accountSelectRequest);
+        return ResponseEntity.ok(CustomResponse.onSuccess("특정 계좌 정보 조회 되었습니다.",accountResponse));
+    }
 }

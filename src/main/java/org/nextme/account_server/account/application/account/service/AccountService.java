@@ -15,13 +15,16 @@ import org.nextme.account_server.account.infrastructure.exception.ApiErrorCode;
 import org.nextme.account_server.account.infrastructure.exception.ApiException;
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountRequest;
 
+import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountSelectRequest;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountResponse;
+import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountSelectResponse;
 import org.nextme.account_server.global.infrastructure.exception.ApplicationException;
 import org.nextme.account_server.global.infrastructure.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -83,8 +86,27 @@ public class AccountService {
     }
 
     // 계좌 전체 조회
-    public List<AccountResponse> getAll(String clientId) {
+    public List<AccountSelectResponse> getAll(String clientId) {
         List<Account>  accounts = accountRepository.findAll();
-        return accounts.stream().map(AccountResponse::of).collect(Collectors.toList());
+        return accounts.stream().map(AccountSelectResponse::of).collect(Collectors.toList());
+    }
+
+    // 계좌 단건 조회
+    public AccountSelectResponse getCondition(AccountSelectRequest accountSelectRequest) {
+
+        // 조건 요청값에 대한 조회
+        Account account = accountRepository.findByIdOrBankAccount(
+                AccountId.of(accountSelectRequest.accountId()),
+                accountSelectRequest.bankAccount());
+
+
+        // 조회된 게 없다면
+        if(account == null ) {
+            throw new AccountException(AccountErrorCode.ACCOUNT_NOT_FOUND);
+        }else{
+            return AccountSelectResponse.of(account);
+        }
+
+
     }
 }
