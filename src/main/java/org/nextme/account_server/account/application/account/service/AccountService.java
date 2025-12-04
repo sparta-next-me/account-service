@@ -36,12 +36,12 @@ public class AccountService {
     
     // 계좌 연동
     public AccountResponse create(AccountRequest account) {
-        String account_Number = apiAdapter.getAccount(account);
-
         // 필수 요청값을 입력하지 않았을 때
         if(account.connectedId() == null || account.connectedId().isEmpty()){
             throw new ApiException(ApiErrorCode.API_MISSING_PARAMETER);
         }
+
+        String account_Number = apiAdapter.getAccount(account);
 
         //커넥티드아이디와 계좌번호가 이미 있는지 확인
         Account existing = accountRepository.findByClientIdAndBankAccount(account.connectedId(), account_Number);
@@ -80,7 +80,7 @@ public class AccountService {
 
     // 계좌 전체 조회
     public List<AccountSelectResponse> getAll(String clientId) {
-        List<Account>  accounts = accountRepository.findAll();
+        List<Account>  accounts = accountRepository.findByClientId(clientId);
         return accounts.stream().map(AccountSelectResponse::of).collect(Collectors.toList());
     }
 

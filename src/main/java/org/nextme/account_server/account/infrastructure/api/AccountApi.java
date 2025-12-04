@@ -3,6 +3,7 @@ package org.nextme.account_server.account.infrastructure.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.nextme.account_server.account.domain.ApiAdapter;
 import org.nextme.account_server.account.infrastructure.exception.ApiErrorCode;
 import org.nextme.account_server.account.infrastructure.exception.ApiException;
@@ -20,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class AccountApi implements ApiAdapter {
 
     private final ObjectMapper objectMapper;
@@ -82,8 +84,11 @@ public class AccountApi implements ApiAdapter {
             throw new ApiException(ApiErrorCode.API_RESPONSE_EMPTY);
 
         }
+        catch (ApiException e){
+            throw e;
+        }
         catch (Exception e){
-            e.printStackTrace();
+            log.error("계좌 조회 API 호출 실패", e);
             throw new ApplicationException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
 

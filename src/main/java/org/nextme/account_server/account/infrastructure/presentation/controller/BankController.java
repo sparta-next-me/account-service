@@ -19,9 +19,9 @@ public class BankController {
 
     @PostMapping
     // 은행코드 생성
-    public ResponseEntity<CustomResponse> createAccount(@RequestParam(required = false) String bankCode,
-                                                        @RequestParam(required = false) String finCoNo,
-                                                        @RequestParam(required = false) String bankName) {
+    public ResponseEntity<CustomResponse> createBank(@RequestParam String bankCode,
+                                                     @RequestParam String finCoNo,
+                                                     @RequestParam String bankName) {
         bankService.create(bankCode,finCoNo,bankName);
         return ResponseEntity.ok(CustomResponse.onSuccess("은행코드 생성되었습니다."));
     }

@@ -25,6 +25,11 @@ public class BankService {
     // 은행코드 생성
     public void create(String bankCode,String finCoNo, String bankName) {
 
+        // 필수 요청값을 입력하지 않았다면
+        if (bankCode == null || bankCode.isBlank() || finCoNo == null || finCoNo.isBlank() || bankName == null || bankName.isBlank()) {
+             throw new BankException(BankErrorCode.BANK_MISSING_PARAMETER);
+        }
+
         //은행코드가 이미 있는지 확인
         Bank existing = bankRepository.findByBankCodeAndFinCoNo(bankCode,finCoNo);
 
