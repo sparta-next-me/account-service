@@ -4,9 +4,13 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.nextme.account_server.account.application.account.exception.AccountErrorCode;
 import org.nextme.account_server.account.application.account.exception.AccountException;
+import org.nextme.account_server.account.application.account.exception.BankErrorCode;
+import org.nextme.account_server.account.application.account.exception.BankException;
 import org.nextme.account_server.account.domain.ApiAdapter;
 import org.nextme.account_server.account.domain.entity.Account;
 import org.nextme.account_server.account.domain.entity.AccountId;
+import org.nextme.account_server.account.domain.entity.Bank;
+import org.nextme.account_server.account.domain.entity.BankId;
 import org.nextme.account_server.account.domain.repository.AccountRepository;
 import org.nextme.account_server.account.domain.repository.BankRepository;
 import org.nextme.account_server.account.infrastructure.exception.ApiErrorCode;
@@ -39,8 +43,6 @@ public class AccountService {
             throw new ApiException(ApiErrorCode.API_MISSING_PARAMETER);
         }
 
-        Account accountNumber = accountRepository.findByBankAccount(account_Number);
-
         //커넥티드아이디와 계좌번호가 이미 있는지 확인
         Account existing = accountRepository.findByClientIdAndBankAccount(account.connectedId(), account_Number);
 
@@ -48,21 +50,27 @@ public class AccountService {
         String account_masked = account_Number.substring(0,3)+"****"+ account_Number.substring(7);
 
 
-//        Bank bankEntity = bankRepository.findById(BankId.of(account.organization()).getId())
-//                .orElseThrow(() -> "d");
+        // 사용자가 입력한 은행코드 있는지 확인
+        Bank bankEntity = bankRepository.findByBankCode(account.organization());
+
+
+
 
         //이미 커넥티드아이디와 계좌가 존재한다면
         if(existing != null) {
             throw new AccountException(AccountErrorCode.DUPLICATE_ACCOUNT);
         }
+        // 은행코드가 없다면
+        if(bankEntity == null) {
+            throw new BankException(BankErrorCode.BANK_NOT_FOUND);
+        }
         existing = Account.builder()
                 .id(AccountId.of(UUID.randomUUID()))
-//                        .bank()
+                .bank(bankEntity)
                 .userName(account.userName())
                 .clientId(account.connectedId())
                 .bankAccount( account_masked)
                 .userId(UUID.randomUUID())
-
                 .build();
         accountRepository.save(existing);
 
