@@ -1,8 +1,7 @@
 package org.nextme.account_server.account.infrastructure.presentation.dto.response;
 
 import lombok.Builder;
-import lombok.Getter;
-import org.nextme.account_server.account.domain.entiry.Account;
+import org.nextme.account_server.account.domain.entity.Account;
 
 @Builder
 

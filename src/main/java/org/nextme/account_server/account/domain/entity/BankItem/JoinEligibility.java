@@ -1,4 +1,4 @@
-package org.nextme.account_server.account.domain.entiry.BankItem;
+package org.nextme.account_server.account.domain.entity.BankItem;
 
 public enum JoinEligibility {
     UNLIMITED, // 제한없음

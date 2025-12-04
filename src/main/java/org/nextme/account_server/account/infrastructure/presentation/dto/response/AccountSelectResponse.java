@@ -1,7 +1,7 @@
 package org.nextme.account_server.account.infrastructure.presentation.dto.response;
 
 import lombok.Builder;
-import org.nextme.account_server.account.domain.entiry.Account;
+import org.nextme.account_server.account.domain.entity.Account;
 
 import java.time.LocalDateTime;
 

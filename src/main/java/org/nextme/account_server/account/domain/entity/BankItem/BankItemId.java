@@ -1,4 +1,4 @@
-package org.nextme.account_server.account.domain.entiry.BankItem;
+package org.nextme.account_server.account.domain.entity.BankItem;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;

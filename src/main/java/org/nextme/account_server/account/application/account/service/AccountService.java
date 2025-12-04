@@ -5,10 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.nextme.account_server.account.application.account.exception.AccountErrorCode;
 import org.nextme.account_server.account.application.account.exception.AccountException;
 import org.nextme.account_server.account.domain.ApiAdapter;
-import org.nextme.account_server.account.domain.entiry.Account;
-import org.nextme.account_server.account.domain.entiry.AccountId;
-import org.nextme.account_server.account.domain.entiry.Bank;
-import org.nextme.account_server.account.domain.entiry.BankId;
+import org.nextme.account_server.account.domain.entity.Account;
+import org.nextme.account_server.account.domain.entity.AccountId;
 import org.nextme.account_server.account.domain.repository.AccountRepository;
 import org.nextme.account_server.account.domain.repository.BankRepository;
 import org.nextme.account_server.account.infrastructure.exception.ApiErrorCode;
@@ -18,18 +16,11 @@ import org.nextme.account_server.account.infrastructure.presentation.dto.request
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountSelectRequest;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountResponse;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountSelectResponse;
-import org.nextme.account_server.global.infrastructure.exception.ApplicationException;
-import org.nextme.account_server.global.infrastructure.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static org.nextme.account_server.global.infrastructure.exception.ErrorCode.DB_ERROR;
-import static org.nextme.infrastructure.exception.ErrorCode.INTERNAL_SERVER_ERROR;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +34,11 @@ public class AccountService {
     public AccountResponse create(AccountRequest account) {
         String account_Number = apiAdapter.getAccount(account);
 
+        // 필수 요청값을 입력하지 않았을 때
+        if(account.connectedId() == null || account.connectedId().isEmpty()){
+            throw new ApiException(ApiErrorCode.API_MISSING_PARAMETER);
+        }
+
         Account accountNumber = accountRepository.findByBankAccount(account_Number);
 
         //커넥티드아이디와 계좌번호가 이미 있는지 확인
@@ -55,33 +51,22 @@ public class AccountService {
 //        Bank bankEntity = bankRepository.findById(BankId.of(account.organization()).getId())
 //                .orElseThrow(() -> "d");
 
-        // 필수 요청값을 입력하지 않았을 때
-        if(account.connectedId() == null || account.connectedId().isEmpty()){
-            throw new ApiException(ApiErrorCode.API_MISSING_PARAMETER);
+        //이미 커넥티드아이디와 계좌가 존재한다면
+        if(existing != null) {
+            throw new AccountException(AccountErrorCode.DUPLICATE_ACCOUNT);
         }
-
-        try{
-            //이미 커넥티드아이디와 계좌가 존재한다면
-            if(existing != null) {
-                throw new AccountException(AccountErrorCode.DUPLICATE_ACCOUNT);
-            }
-            existing = Account.builder()
-                    .id(AccountId.of(UUID.randomUUID()))
+        existing = Account.builder()
+                .id(AccountId.of(UUID.randomUUID()))
 //                        .bank()
-                    .userName(account.userName())
-                    .clientId(account.connectedId())
-                    .bankAccount( account_masked)
-                    .userId(UUID.randomUUID())
+                .userName(account.userName())
+                .clientId(account.connectedId())
+                .bankAccount( account_masked)
+                .userId(UUID.randomUUID())
 
-                    .build();
-            accountRepository.save(existing);
+                .build();
+        accountRepository.save(existing);
 
-            return AccountResponse.of(existing);
-
-
-        }catch (ApiException e){
-            throw new ApplicationException(DB_ERROR);
-        }
+        return AccountResponse.of(existing);
 
     }
 

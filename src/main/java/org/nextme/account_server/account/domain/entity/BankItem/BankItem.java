@@ -1,10 +1,8 @@
-package org.nextme.account_server.account.domain.entiry.BankItem;
+package org.nextme.account_server.account.domain.entity.BankItem;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.nextme.account_server.account.domain.entiry.Bank;
-
-import java.util.UUID;
+import org.nextme.account_server.account.domain.entity.Bank;
 
 @Table(name = "p_bankItem")
 @Getter

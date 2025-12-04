@@ -1,11 +1,7 @@
-package org.nextme.account_server.account.domain.entiry;
+package org.nextme.account_server.account.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.nextme.account_server.global.common.jpa.BaseEntity;
-
-import java.util.UUID;
 
 @Table(name = "p_bank_code")
 @Getter

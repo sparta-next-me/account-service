@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("v1/account")
@@ -27,15 +28,17 @@ public class AccountController {
     }
 
     // 본인 계좌 전체 조회
-    @GetMapping()
-    public ResponseEntity<CustomResponse<List<AccountSelectResponse>>> getAccount(@RequestBody String clientId) {
+    @GetMapping("/{clientId}")
+    public ResponseEntity<CustomResponse<List<AccountSelectResponse>>> getAccount(@PathVariable String clientId){
         List<AccountSelectResponse> accountResponse = accountService.getAll(clientId);
         return ResponseEntity.ok(CustomResponse.onSuccess("계좌 조회 되었습니다.",accountResponse));
     }
 
     // 계좌 단건(조건: 아이디, 계좌번호) 조회
     @GetMapping("/condition")
-    public ResponseEntity<CustomResponse<AccountSelectResponse>> getAccount(@RequestBody AccountSelectRequest accountSelectRequest) {
+    public ResponseEntity<CustomResponse<AccountSelectResponse>> getAccount(@RequestParam(required = false) UUID accountId,
+            @RequestParam(required = false) String bankAccount) {
+        AccountSelectRequest accountSelectRequest = new AccountSelectRequest(accountId, bankAccount);
         AccountSelectResponse accountResponse = accountService.getCondition(accountSelectRequest);
         return ResponseEntity.ok(CustomResponse.onSuccess("특정 계좌 정보 조회 되었습니다.",accountResponse));
     }

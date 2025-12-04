@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum AccountErrorCode {
 
-    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "BAD_REQUEST", "계좌번호를 찾을 수 없습니다."),
+    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "NOT_FOUND", "계좌번호를 찾을 수 없습니다."),
     DUPLICATE_ACCOUNT(HttpStatus.CONFLICT, "CONFLICT", "이미 존재하는 계좌입니다.");
 
     private final HttpStatus httpStatus;

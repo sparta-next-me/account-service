@@ -1,4 +1,4 @@
-package org.nextme.account_server.account.domain.entiry;
+package org.nextme.account_server.account.domain.entity;
 
 
 import jakarta.persistence.Embeddable;

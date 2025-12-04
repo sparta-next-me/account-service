@@ -1,8 +1,8 @@
-package org.nextme.account_server.account.domain.entiry.Tran;
+package org.nextme.account_server.account.domain.entity.Tran;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.nextme.account_server.account.domain.entiry.Account;
+import org.nextme.account_server.account.domain.entity.Account;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

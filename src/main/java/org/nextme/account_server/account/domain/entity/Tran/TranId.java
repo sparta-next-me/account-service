@@ -1,4 +1,4 @@
-package org.nextme.account_server.account.domain.entiry.Tran;
+package org.nextme.account_server.account.domain.entity.Tran;
 
 
 import jakarta.persistence.Embeddable;
