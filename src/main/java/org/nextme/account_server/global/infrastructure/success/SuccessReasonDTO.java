@@ -1,4 +1,4 @@
-package org.nextme.infrastructure.success;
+package org.nextme.account_server.global.infrastructure.success;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -7,7 +7,9 @@ import org.nextme.account_server.global.common.jpa.BaseEntity;
 
 import java.util.UUID;
 
-@Table(name = "p_user_account")
+@Table(name = "p_user_account",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"client_id", "bank_account"}))
+
 @Getter
 @ToString
 @Entity
@@ -21,16 +23,17 @@ public class Account extends BaseEntity {
     // 계좌ID
     private AccountId id;
 
-    @JoinColumn(nullable = false, name = "bank_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    // 은행ID
-    private Bank bank;
+//    @JoinColumn(nullable = false, name = "bank_id")
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    // 은행ID
+//    private Bank bank;
 
     @Column(nullable = false, name = "user_name")
     // 유저이름
     private String userName;
 
-    @Column(nullable = false, name = "client_id", unique = true)
+    // 커넥티드ID
+    @Column(nullable = false, name = "client_id")
     //계좌유저ID
     private String clientId;
 

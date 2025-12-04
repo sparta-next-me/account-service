@@ -2,7 +2,6 @@ package org.nextme.account_server.account.domain.entiry.BankItem;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;
-import org.nextme.account_server.account.domain.entiry.AccountId;
 
 import java.util.UUID;
 

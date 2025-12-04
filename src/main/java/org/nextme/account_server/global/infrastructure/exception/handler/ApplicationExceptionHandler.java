@@ -1,10 +1,11 @@
-package org.nextme.infrastructure.exception.handler;
+package org.nextme.account_server.global.infrastructure.exception.handler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.nextme.infrastructure.exception.ApplicationException;
-import org.nextme.infrastructure.exception.ErrorCode;
-import org.nextme.infrastructure.exception.ErrorResponse;
-import org.nextme.infrastructure.exception.FieldError;
+
+import org.nextme.account_server.global.infrastructure.exception.ApplicationException;
+import org.nextme.account_server.global.infrastructure.exception.ErrorCode;
+import org.nextme.account_server.global.infrastructure.exception.ErrorResponse;
+import org.nextme.account_server.global.infrastructure.exception.FieldError;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
