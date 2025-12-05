@@ -1,13 +1,11 @@
 package org.nextme.account_server.account.infrastructure.api;
 
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.nextme.account_server.account.application.bankItem.exception.BankItemErrorCode;
-import org.nextme.account_server.account.application.bankItem.exception.BankItemException;
-import org.nextme.account_server.account.domain.BankItemApiAdapter;
-import org.nextme.account_server.account.domain.entity.BankItem.BankItem;
+import org.nextme.account_server.account.domain.BankItemSavingApiAdapter;
 import org.nextme.account_server.account.infrastructure.exception.ApiErrorCode;
 import org.nextme.account_server.account.infrastructure.exception.ApiException;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.BankItemResponse;
@@ -22,11 +20,10 @@ import org.springframework.web.client.RestClient;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class BankItemApi implements BankItemApiAdapter {
+public class BankItemSavingApi implements BankItemSavingApiAdapter {
 
     private final ObjectMapper objectMapper;
 
@@ -34,10 +31,9 @@ public class BankItemApi implements BankItemApiAdapter {
     private String authKey;
 
     @Override
-    public List<BankItemResponse> getBankItemList(String financeCd) {
+    public List<BankItemResponse> getBankItemSavingList(String financeCd) {
 
-        // 정기예금
-        String url = "https://finlife.fss.or.kr/finlifeapi/depositProductsSearch.json?auth="+authKey+"&topFinGrpNo=020000&pageNo=1&financeCd="+financeCd;
+        String url = "https://finlife.fss.or.kr/finlifeapi/savingProductsSearch.json?auth="+authKey+"&topFinGrpNo=020000&pageNo=1&financeCd="+financeCd;
 
         try{
             ResponseEntity<String> response = RestClient.create()

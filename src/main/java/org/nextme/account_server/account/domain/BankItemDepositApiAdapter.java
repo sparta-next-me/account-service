@@ -5,7 +5,7 @@ import org.nextme.account_server.account.infrastructure.presentation.dto.respons
 
 import java.util.List;
 
-public interface BankItemApiAdapter {
+public interface BankItemDepositApiAdapter {
     // 금융상품 정보 반환
-    List<BankItemResponse> getBankItemList(String financeCd);
+    List<BankItemResponse> getBankItemDepositList(String financeCd);
 }
