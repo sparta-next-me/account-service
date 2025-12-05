@@ -1,14 +1,10 @@
 package org.nextme.account_server.account.infrastructure.presentation.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.nextme.account_server.account.application.account.service.BankService;
-import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountRequest;
-import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountResponse;
+import org.nextme.account_server.account.application.bank.service.BankService;
 import org.nextme.account_server.global.infrastructure.success.CustomResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("v1/bank")

@@ -1,19 +1,15 @@
-package org.nextme.account_server.account.application.account.service;
+package org.nextme.account_server.account.application.bank.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.nextme.account_server.account.application.account.exception.AccountErrorCode;
-import org.nextme.account_server.account.application.account.exception.AccountException;
-import org.nextme.account_server.account.application.account.exception.BankErrorCode;
-import org.nextme.account_server.account.application.account.exception.BankException;
-import org.nextme.account_server.account.domain.entity.Account;
+import org.nextme.account_server.account.application.bank.exception.BankErrorCode;
+import org.nextme.account_server.account.application.bank.exception.BankException;
 import org.nextme.account_server.account.domain.entity.Bank;
 import org.nextme.account_server.account.domain.entity.BankId;
 import org.nextme.account_server.account.domain.repository.BankRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
-import java.util.prefs.BackingStoreException;
 
 @Service
 @Transactional

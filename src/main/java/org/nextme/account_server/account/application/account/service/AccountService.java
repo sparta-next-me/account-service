@@ -4,13 +4,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.nextme.account_server.account.application.account.exception.AccountErrorCode;
 import org.nextme.account_server.account.application.account.exception.AccountException;
-import org.nextme.account_server.account.application.account.exception.BankErrorCode;
-import org.nextme.account_server.account.application.account.exception.BankException;
-import org.nextme.account_server.account.domain.ApiAdapter;
+import org.nextme.account_server.account.application.bank.exception.BankErrorCode;
+import org.nextme.account_server.account.application.bank.exception.BankException;
+import org.nextme.account_server.account.domain.AccountApiAdapter;
 import org.nextme.account_server.account.domain.entity.Account;
 import org.nextme.account_server.account.domain.entity.AccountId;
 import org.nextme.account_server.account.domain.entity.Bank;
-import org.nextme.account_server.account.domain.entity.BankId;
 import org.nextme.account_server.account.domain.repository.AccountRepository;
 import org.nextme.account_server.account.domain.repository.BankRepository;
 import org.nextme.account_server.account.infrastructure.exception.ApiErrorCode;
@@ -32,7 +31,7 @@ import java.util.stream.Collectors;
 public class AccountService {
     private final AccountRepository accountRepository;
     private final BankRepository bankRepository;
-    private final ApiAdapter apiAdapter;
+    private final AccountApiAdapter apiAdapter;
     
     // 계좌 연동
     public AccountResponse create(AccountRequest account) {
@@ -47,7 +46,7 @@ public class AccountService {
         Account existing = accountRepository.findByClientIdAndBankAccount(account.connectedId(), account_Number);
 
         // 계좌번호 마스킹 처리
-        String account_masked = account_Number.substring(0,3)+"****"+ account_Number.substring(7);
+        //String account_masked = account_Number.substring(0,3)+"****"+ account_Number.substring(7);
 
 
         // 사용자가 입력한 은행코드 있는지 확인
@@ -69,7 +68,7 @@ public class AccountService {
                 .bank(bankEntity)
                 .userName(account.userName())
                 .clientId(account.connectedId())
-                .bankAccount( account_masked)
+                .bankAccount( account_Number)
                 .userId(UUID.randomUUID())
                 .build();
         accountRepository.save(existing);

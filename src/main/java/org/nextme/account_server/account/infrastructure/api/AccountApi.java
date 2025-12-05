@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.nextme.account_server.account.domain.ApiAdapter;
+import org.nextme.account_server.account.domain.AccountApiAdapter;
 import org.nextme.account_server.account.infrastructure.exception.ApiErrorCode;
 import org.nextme.account_server.account.infrastructure.exception.ApiException;
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountRequest;
@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class AccountApi implements ApiAdapter {
+public class AccountApi implements AccountApiAdapter {
 
     private final ObjectMapper objectMapper;
 

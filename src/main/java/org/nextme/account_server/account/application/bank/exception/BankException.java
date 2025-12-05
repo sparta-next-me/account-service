@@ -1,4 +1,4 @@
-package org.nextme.account_server.account.application.account.exception;
+package org.nextme.account_server.account.application.bank.exception;
 
 import org.nextme.account_server.global.infrastructure.exception.ApplicationException;
 
