@@ -11,6 +11,7 @@ import org.nextme.account_server.account.application.bankItem.exception.BankItem
 import org.nextme.account_server.account.domain.BankItemDepositApiAdapter;
 import org.nextme.account_server.account.domain.BankItemSavingApiAdapter;
 import org.nextme.account_server.account.domain.entity.Bank;
+import org.nextme.account_server.account.domain.entity.BankId;
 import org.nextme.account_server.account.domain.entity.BankItem.BankItem;
 import org.nextme.account_server.account.domain.entity.BankItem.BankItemId;
 import org.nextme.account_server.account.domain.entity.BankItem.BankItemType;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -157,4 +159,33 @@ public class BankItemService {
 
     }
 
+    // 금융상품 전체조회
+    public List<BankItemResponse> getAll() {
+        List<BankItem> bankItemResponse = bankItemRepository.findAll();
+        return bankItemResponse.stream().map(BankItemResponse::of).collect(Collectors.toList());
+    }
+
+
+    // 해당 은행의 금융상품 전체조회
+    public List<BankItemResponse> getBankAll(UUID bankId) {
+        List<BankItem> bankItemResponse = bankItemRepository.findByBankBankId (BankId.of(bankId));
+        return bankItemResponse.stream().map(BankItemResponse::of).collect(Collectors.toList());
+    }
+
+    // 해당 은행의 금융상품 조건조회
+    public BankItemResponse getBankItem(String bankCode, UUID bankItemId) {
+        // 파라미터 입력하지 않았다면
+        if(bankItemId == null || bankCode == null) {
+            throw new BankItemException(BankItemErrorCode.BANK_ITEM_MISSING_PARAMETER);
+        }
+
+        // 조건 요창값에 대한 조회
+        BankItem response = bankItemRepository.findByBankBankCodeAndBankItemId(bankCode,BankItemId.of(bankItemId));
+
+        // 조회된 게 없다면
+        if(response == null) {
+            throw new BankItemException(BankItemErrorCode.BANK_ITEM_NOT_FOUND);
+        }
+        return BankItemResponse.of(response);
+    }
 }

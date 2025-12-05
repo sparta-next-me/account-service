@@ -3,6 +3,7 @@ package org.nextme.account_server.account.domain.entity.BankItem;
 import jakarta.persistence.*;
 import lombok.*;
 import org.nextme.account_server.account.domain.entity.Bank;
+import org.nextme.common.jpa.BaseEntity;
 
 @Table(name = "p_bankItem")
 @Getter
@@ -12,10 +13,9 @@ import org.nextme.account_server.account.domain.entity.Bank;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class BankItem {
+public class BankItem extends BaseEntity {
 
     @EmbeddedId
-    @Column(name = "bank_item_id")
     // 금융상품ID
     private BankItemId bankItemId;
 
