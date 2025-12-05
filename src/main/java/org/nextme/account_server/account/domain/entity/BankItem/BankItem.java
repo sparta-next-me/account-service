@@ -26,7 +26,7 @@ public class BankItem {
 
     @Column(name = "fin_prdt_cd", nullable = false)
     // 금융상품 코드
-    private String finPrdt_cd;
+    private String finPrdtCd;
 
     @Column(name = "fin_prdt_nm", nullable = false)
     // 금융상품명
@@ -57,7 +57,7 @@ public class BankItem {
     // 최고우대금리
     private String intrRate2;
 
-    @Column(name = "dcls_strt_day")
+    @Column(name = "dcls_strt_day", nullable = false)
     // 공시시작일
     private String dclsStrtDay;
 
@@ -70,8 +70,9 @@ public class BankItem {
     private String maxLimit;
 
     @Column(name = "item_type", nullable = false)
+    @Enumerated(EnumType.STRING)
     // 금융상품타입
-    private String itemType;
+    private BankItemType itemType;
 
     @Column(name = "etc_note")
     // 기타유의사항
