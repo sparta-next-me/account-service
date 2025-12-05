@@ -17,6 +17,7 @@ public record AccountSelectResponse(
         return AccountSelectResponse.builder()
                 .bankAccount(account.getBankAccount())
                 .createdAt(account.getCreatedAt())
+                .bankName(account.getBank().getBankName())
                 .locked(account.isLocked())
                 .build();
     }

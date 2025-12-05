@@ -9,7 +9,6 @@ public enum TranErrorCode {
     DUPLICATE_TRAN(HttpStatus.CONFLICT, "CONFLICT", "이미 존재하는 거래내역입니다."),
     NOT_FOUND_ID(HttpStatus.NOT_FOUND,"NOT_FOUNT", "계좌 아이디가 존재하지 않습니다."),
     NOT_FOUND_TRAN(HttpStatus.NOT_FOUND,"NOT_FOUNT", "거래내역이 존재하지 않습니다.");
-
     private final HttpStatus httpStatus;
     private final String code;
     private final String defaultMessage;

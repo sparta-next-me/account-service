@@ -2,12 +2,15 @@ package org.nextme.account_server.account.application.tran.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.nextme.account_server.account.application.account.exception.AccountErrorCode;
+import org.nextme.account_server.account.application.account.exception.AccountException;
 import org.nextme.account_server.account.application.bank.exception.BankErrorCode;
 import org.nextme.account_server.account.application.bank.exception.BankException;
 import org.nextme.account_server.account.application.tran.exception.TranErrorCode;
 import org.nextme.account_server.account.application.tran.exception.TranException;
 import org.nextme.account_server.account.domain.TranApiAdapter;
 import org.nextme.account_server.account.domain.entity.Account;
+import org.nextme.account_server.account.domain.entity.AccountId;
 import org.nextme.account_server.account.domain.entity.Tran.Tran;
 import org.nextme.account_server.account.domain.entity.Tran.TranId;
 import org.nextme.account_server.account.domain.repository.AccountRepository;
@@ -16,8 +19,12 @@ import org.nextme.account_server.account.infrastructure.presentation.dto.request
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.TranResponse;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -87,5 +94,28 @@ public class TranService {
 
         return TranResponse.of(tranList);
 
+    }
+
+    // 거래내역 전체조회
+    public List<TranResponse> getAll(UUID accountId) {
+        List<Tran> tranResponse = tranRepository.findByAccountId(AccountId.of(accountId));
+        return tranResponse.stream().map(TranResponse::of).collect(Collectors.toList());
+    }
+
+    // 거래내역 단건조회
+    public TranResponse getCondition(UUID tranId, String tranDate) {
+        // 파라미터 입력하지 않았다면
+        if(tranId == null && tranDate==null ) {
+            throw new TranException(TranErrorCode.TRAN_MISSING_PARAMETER);
+        }
+        // 조건 요청값에 대한 조회
+        Tran tran = tranRepository.findByTranIdOrTranDate(tranId, tranDate);
+
+        // 조회된 게 없다면
+        if(tran == null) {
+            throw new TranException(TranErrorCode.NOT_FOUND_TRAN);
+        }else{
+            return TranResponse.of(tran);
+        }
     }
 }
