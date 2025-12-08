@@ -71,10 +71,7 @@ public class TranService {
 
         Tran tranList = null;
         for(TranResponse tran : result_tran) {
-            //이미 있는 거래 내역인지 거래일자+금액으로 확인
 
-//            Tran existing = tran.findByTranDateAndTranTimeAnd(tran.resAccountTrDate(), tran.resAccountTrTime());
-//
             Tran existing = tranRepositoryImpl.tranRequest(tran.resAccountTrDate(), tran.resAccountTrTime(),tran.resAccountIn(), tran.resAccountOut());
             // 존재한다면
             if(existing != null) {
@@ -82,7 +79,6 @@ public class TranService {
             }
 
 
-            System.out.println(tran.resAccountTrDate() + " 거래일자");
             tranList = Tran.builder()
                     .tranId(TranId.of(UUID.randomUUID()))
                     .account(account_id)
@@ -93,7 +89,6 @@ public class TranService {
                     .deposit(tran.resAccountIn())
                     .currentBalance(tran.resAfterTranBalance())
                     .build();
-            System.out.println("여기 옴");
             tranRepository.save(tranList);
         }
 
