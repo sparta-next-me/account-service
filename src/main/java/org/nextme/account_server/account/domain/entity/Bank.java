@@ -3,7 +3,8 @@ package org.nextme.account_server.account.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Table(name = "p_bank_code")
+@Table(name = "p_bank_code",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"bank_code", "fin_co_no"}))
 @Getter
 @ToString
 @Entity

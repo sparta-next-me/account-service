@@ -7,7 +7,8 @@ import org.nextme.account_server.account.domain.entity.Account;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Table(name = "p_tranList")
+@Table(name = "p_tran_List",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"tranDate", "tranTime"}))
 @Getter
 @ToString
 @Entity
@@ -31,8 +32,11 @@ public class Tran {
     private UUID userId;
 
     @Column(name = "tran_date", nullable = false)
-    // 거래시간
-    private LocalDateTime tranDate;
+    // 거래일자
+    private String tranDate;
+
+    //거래시간
+    private String tranTime;
 
     @Column(name = "withdraw")
     // 출금금액
@@ -46,9 +50,9 @@ public class Tran {
     // 현재잔액
     private int currentBalance;
 
-    @Column(name = "tran_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    // 거래구분
-    private TranType tranType;
+//    @Column(name = "tran_type", nullable = false)
+//    @Enumerated(EnumType.STRING)
+//    // 거래구분
+//    private TranType tranType;
 
 }

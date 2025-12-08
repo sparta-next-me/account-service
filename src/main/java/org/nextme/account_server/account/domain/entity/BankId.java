@@ -23,6 +23,6 @@ public class BankId {
     }
 
     public static BankId of(String id) {
-        return BankId.of(UUID.randomUUID());
+        return BankId.of(UUID.fromString(id));
     }
 }

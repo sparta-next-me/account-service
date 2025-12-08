@@ -23,10 +23,10 @@ public class Account extends BaseEntity {
     // 계좌ID
     private AccountId id;
 
-//    @JoinColumn(nullable = false, name = "bank_id")
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    // 은행ID
-//    private Bank bank;
+    @JoinColumn(nullable = false, name = "bank_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    // 은행ID
+    private Bank bank;
 
     @Column(nullable = false, name = "user_name")
     // 유저이름

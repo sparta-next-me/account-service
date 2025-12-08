@@ -1,0 +1,72 @@
+package org.nextme.account_server.account.infrastructure.api;
+
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.nextme.account_server.account.domain.TranApiAdapter;
+import org.nextme.account_server.account.infrastructure.presentation.dto.request.TranRequest;
+import org.nextme.account_server.account.infrastructure.presentation.dto.response.TranResponse;
+import org.nextme.account_server.global.infrastructure.exception.ApplicationException;
+import org.nextme.account_server.global.infrastructure.exception.ErrorCode;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
+
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+
+
+@Component
+@Slf4j
+@RequiredArgsConstructor
+public class TranApi implements TranApiAdapter {
+
+    private final ObjectMapper objectMapper;
+
+    @Value("${ACCESS_TOKEN}")
+    private String accessToken;
+
+
+    @Override
+    public List<TranResponse> getTranList(TranRequest request) {
+        String url = "https://development.codef.io/v1/kr/bank/p/account/transaction-list";
+
+        try {
+            ResponseEntity<String> response = RestClient.create()
+                    .post()
+                    .uri(url)
+                    .header("Authorization", accessToken)
+                    .body(request)
+                    .retrieve()
+                    .toEntity(String.class);
+
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                return new ArrayList<>();
+            }
+
+            String decoded = URLDecoder.decode(response.getBody(), StandardCharsets.UTF_8);
+            JsonNode tranListNode = objectMapper.readTree(decoded)
+                    .path("data")
+                    .path("resTrHistoryList");
+
+            List<TranResponse> tranList = new ArrayList<>();
+            if (tranListNode.isArray()) {
+                for (JsonNode node : tranListNode) {
+                    TranResponse tran = objectMapper.treeToValue(node, TranResponse.class);
+                    tranList.add(tran);
+                }
+            }
+
+            return tranList;
+
+        } catch (Exception e) {
+            log.error("계좌 조회 API 호출 실패", e);
+            throw new ApplicationException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+}
