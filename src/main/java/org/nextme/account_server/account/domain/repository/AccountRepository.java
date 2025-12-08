@@ -18,4 +18,6 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
     Account findByIdOrBankAccount(AccountId id, String bankAccount);
 
     List<Account> findByClientId(String clientId);
+
+    Account findByUserId(UUID userId);
 }

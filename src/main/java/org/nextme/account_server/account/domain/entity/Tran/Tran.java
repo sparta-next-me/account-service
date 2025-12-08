@@ -3,12 +3,13 @@ package org.nextme.account_server.account.domain.entity.Tran;
 import jakarta.persistence.*;
 import lombok.*;
 import org.nextme.account_server.account.domain.entity.Account;
+import org.nextme.account_server.global.common.jpa.BaseEntity;
+
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Table(name = "p_tran_List",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"tranDate", "tranTime"}))
+@Table(name = "p_tran_List")
 @Getter
 @ToString
 @Entity
@@ -16,7 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class Tran {
+public class Tran extends BaseEntity {
 
     @EmbeddedId
     // 거래ID

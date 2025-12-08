@@ -3,7 +3,8 @@ package org.nextme.account_server.account.domain.entity.BankItem;
 import jakarta.persistence.*;
 import lombok.*;
 import org.nextme.account_server.account.domain.entity.Bank;
-import org.nextme.common.jpa.BaseEntity;
+import org.nextme.account_server.global.common.jpa.BaseEntity;
+
 
 @Table(name = "p_bankItem")
 @Getter

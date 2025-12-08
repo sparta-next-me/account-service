@@ -15,6 +15,8 @@ public interface TranRepository extends JpaRepository<Tran, UUID> {
 
 
     List<Tran> findByAccountId(AccountId of);
+    
+    Tran findByTranDate(String s);
 
     Tran findByTranIdOrTranDate(UUID tranId, String tranDate);
 }

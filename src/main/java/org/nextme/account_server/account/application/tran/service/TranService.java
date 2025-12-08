@@ -17,6 +17,7 @@ import org.nextme.account_server.account.domain.repository.AccountRepository;
 import org.nextme.account_server.account.domain.repository.TranRepository;
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.TranRequest;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.TranResponse;
+import org.nextme.account_server.account.infrastructure.repository.TranRepositoryImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -33,13 +34,14 @@ public class TranService {
     private final TranApiAdapter tranApiAdapter;
     private final TranRepository tranRepository;
     private final AccountRepository accountRepository;
+    private final TranRepositoryImpl tranRepositoryImpl;
 
     public TranResponse create(TranRequest request) {
 
         // 필수 입력값을 입력하지 않는다면
         if(request.organization() == null || request.organization().isEmpty()
                 || request.connectedId() == null || request.connectedId().isEmpty()
-        || request.account() == null || request.account().isEmpty()
+                || request.account() == null || request.account().isEmpty()
                 || request.orderBy() == null || request.orderBy().isEmpty()
                 || request.startDate() == null || request.startDate().isEmpty()
                 || request.endDate() == null || request.endDate().isEmpty()
@@ -50,15 +52,15 @@ public class TranService {
         // 본인 계좌번호의 id값 가져옴
         Account account_id = accountRepository.findByBankAccount(request.account());
 
-        //존재하지 않는다면
+        //계좌 아이디가 존재하지 않는다면
         if(account_id == null) {
-            throw new TranException(TranErrorCode.NOT_FOUND_ID);
+            throw new AccountException(AccountErrorCode.ACCOUNT_ID_NOT_FOUND);
         }
 
-        // 계좌 사용자의 userId
-        Account user_id = accountRepository.findByBankAccount(request.account());
-
-
+        // 사용자 아이디가 존재하지 않는다면
+        if(account_id.getUserId() == null) {
+            throw new TranException(TranErrorCode.NOT_FOUND_USER_ID);
+        }
 
         List<TranResponse> result_tran = tranApiAdapter.getTranList(request);
 
@@ -69,25 +71,29 @@ public class TranService {
 
         Tran tranList = null;
         for(TranResponse tran : result_tran) {
-            //이미 있는 거래 내역인지 거래일자로 확인
-            Tran existing = tranRepository.findByTranDateAndTranTime(tran.resAccountTrDate(), tran.resAccountTrTime());
+            //이미 있는 거래 내역인지 거래일자+금액으로 확인
 
+//            Tran existing = tran.findByTranDateAndTranTimeAnd(tran.resAccountTrDate(), tran.resAccountTrTime());
+//
+            Tran existing = tranRepositoryImpl.tranRequest(tran.resAccountTrDate(), tran.resAccountTrTime(),tran.resAccountIn(), tran.resAccountOut());
             // 존재한다면
             if(existing != null) {
                 throw new TranException(TranErrorCode.DUPLICATE_TRAN);
             }
 
+
+            System.out.println(tran.resAccountTrDate() + " 거래일자");
             tranList = Tran.builder()
                     .tranId(TranId.of(UUID.randomUUID()))
                     .account(account_id)
-                    .userId(user_id.getUserId())
+                    .userId(account_id.getUserId())
                     .tranDate(tran.resAccountTrDate())
                     .tranTime(tran.resAccountTrTime())
                     .withDraw(tran.resAccountOut())
                     .deposit(tran.resAccountIn())
                     .currentBalance(tran.resAfterTranBalance())
                     .build();
-
+            System.out.println("여기 옴");
             tranRepository.save(tranList);
         }
 

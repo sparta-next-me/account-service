@@ -8,7 +8,8 @@ public enum TranErrorCode {
     TRAN_MISSING_PARAMETER(HttpStatus.BAD_REQUEST,"BAD_REQUEST", "필수 요청 파라미터가 없습니다"),
     DUPLICATE_TRAN(HttpStatus.CONFLICT, "CONFLICT", "이미 존재하는 거래내역입니다."),
     NOT_FOUND_ID(HttpStatus.NOT_FOUND,"NOT_FOUNT", "계좌 아이디가 존재하지 않습니다."),
-    NOT_FOUND_TRAN(HttpStatus.NOT_FOUND,"NOT_FOUNT", "거래내역이 존재하지 않습니다.");
+    NOT_FOUND_TRAN(HttpStatus.NOT_FOUND,"NOT_FOUNT", "거래내역이 존재하지 않습니다."),
+    NOT_FOUND_USER_ID(HttpStatus.NOT_FOUND,"NOT_FOUNT", "계좌의 사용자 아이디가 존재하지 않습니다.");
     private final HttpStatus httpStatus;
     private final String code;
     private final String defaultMessage;

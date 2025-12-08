@@ -62,6 +62,8 @@ public class TranApi implements TranApiAdapter {
                 }
             }
 
+            System.out.println(tranList.toString() + " api에서 가져온 거랜애ㅕㄱ");
+
             return tranList;
 
         } catch (Exception e) {
