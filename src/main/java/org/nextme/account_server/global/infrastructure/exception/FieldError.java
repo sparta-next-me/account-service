@@ -1,4 +1,4 @@
-package org.nextme.infrastructure.exception;
+package org.nextme.account_server.global.infrastructure.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

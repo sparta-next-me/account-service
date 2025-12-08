@@ -1,4 +1,4 @@
-package org.nextme.infrastructure.exception;
+package org.nextme.account_server.global.infrastructure.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatusCode;
@@ -27,4 +27,5 @@ public class ApplicationException extends HttpStatusCodeException {
         this.code = code;
         this.message = message;
     }
+
 }
