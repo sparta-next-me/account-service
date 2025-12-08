@@ -7,6 +7,7 @@ import org.nextme.account_server.account.application.account.exception.AccountEx
 import org.nextme.account_server.account.application.bank.exception.BankErrorCode;
 import org.nextme.account_server.account.application.bank.exception.BankException;
 import org.nextme.account_server.account.domain.AccountApiAdapter;
+import org.nextme.account_server.account.domain.AccountDeleteApiAdapter;
 import org.nextme.account_server.account.domain.entity.Account;
 import org.nextme.account_server.account.domain.entity.AccountId;
 import org.nextme.account_server.account.domain.entity.Bank;
@@ -14,9 +15,11 @@ import org.nextme.account_server.account.domain.repository.AccountRepository;
 import org.nextme.account_server.account.domain.repository.BankRepository;
 import org.nextme.account_server.account.infrastructure.exception.ApiErrorCode;
 import org.nextme.account_server.account.infrastructure.exception.ApiException;
+import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountDeleteRequest;
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountRequest;
 
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountSelectRequest;
+import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountDeleteResponse;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountResponse;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountSelectResponse;
 import org.springframework.stereotype.Service;
@@ -32,6 +35,8 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final BankRepository bankRepository;
     private final AccountApiAdapter apiAdapter;
+    private final AccountDeleteApiAdapter  apiDeleteAdapter;
+
     
     // 계좌 연동
     public AccountResponse create(AccountRequest account) {
@@ -99,6 +104,19 @@ public class AccountService {
             return AccountSelectResponse.of(account);
         }
 
+
+    }
+
+    //계정삭제
+    public void delete(AccountDeleteRequest accountDeleteRequest) {
+        Account account = accountRepository.findById(AccountId.of(accountDeleteRequest.accountId()));
+        // 삭제할 게좌 아이디나 유저 아이디가 없다면
+        if(account == null || account.getUserId() == null) {
+            throw new AccountException(AccountErrorCode.ACCOUNT_ID_NOT_FOUND);
+        }
+
+        apiDeleteAdapter.deleteAccount(accountDeleteRequest);
+        accountRepository.delete(account);
 
     }
 }

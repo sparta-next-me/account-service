@@ -3,6 +3,7 @@ package org.nextme.account_server.account.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
 import org.nextme.account_server.global.common.jpa.BaseEntity;
 
 import java.util.UUID;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE p_user_account SET is_deleted = true WHERE id = ?")
 public class Account extends BaseEntity {
 
     @EmbeddedId
@@ -54,6 +56,11 @@ public class Account extends BaseEntity {
     @Column(nullable = false, name = "user_id")
     // 유저식별ID
     private UUID userId;
+
+    @ColumnDefault("false")
+    @Column(nullable = false)
+    // 계좌상태
+    private boolean is_deleted;
 
 
 
