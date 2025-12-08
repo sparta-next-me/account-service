@@ -9,4 +9,6 @@ public interface BankRepository extends JpaRepository<Bank, UUID> {
     Bank findByBankCode(String bankCode);
 
     Bank findByBankCodeAndFinCoNo(String bankCode, String finCoNo);
+
+    Bank findByFinCoNo(String financeCd);
 }
