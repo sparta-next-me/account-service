@@ -17,6 +17,7 @@ import org.nextme.account_server.account.domain.repository.AccountRepository;
 import org.nextme.account_server.account.domain.repository.TranRepository;
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.TranRequest;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.TranResponse;
+import org.nextme.account_server.account.infrastructure.repository.TranRepositoryCustom;
 import org.nextme.account_server.account.infrastructure.repository.TranRepositoryImpl;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +35,7 @@ public class TranService {
     private final TranApiAdapter tranApiAdapter;
     private final TranRepository tranRepository;
     private final AccountRepository accountRepository;
-    private final TranRepositoryImpl tranRepositoryImpl;
+    private final TranRepositoryCustom tranRepositoryCustom;
 
     public TranResponse create(TranRequest request) {
 
@@ -72,7 +73,7 @@ public class TranService {
         Tran tranList = null;
         for(TranResponse tran : result_tran) {
 
-            Tran existing = tranRepositoryImpl.tranRequest(tran.resAccountTrDate(), tran.resAccountTrTime(),tran.resAccountIn(), tran.resAccountOut());
+            Tran existing = tranRepositoryCustom.tranRequest(tran.resAccountTrDate(), tran.resAccountTrTime(),tran.resAccountIn(), tran.resAccountOut());
             // 존재한다면
             if(existing != null) {
                 throw new TranException(TranErrorCode.DUPLICATE_TRAN);

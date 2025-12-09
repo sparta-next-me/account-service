@@ -2,10 +2,12 @@ package org.nextme.account_server.account.application.account.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.nextme.account_server.account.application.account.exception.AccountErrorCode;
 import org.nextme.account_server.account.application.account.exception.AccountException;
 import org.nextme.account_server.account.application.bank.exception.BankErrorCode;
 import org.nextme.account_server.account.application.bank.exception.BankException;
+import org.nextme.account_server.account.application.tran.exception.TranException;
 import org.nextme.account_server.account.domain.AccountApiAdapter;
 import org.nextme.account_server.account.domain.AccountDeleteApiAdapter;
 import org.nextme.account_server.account.domain.entity.Account;
@@ -31,6 +33,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class AccountService {
     private final AccountRepository accountRepository;
     private final BankRepository bankRepository;
@@ -120,8 +123,27 @@ public class AccountService {
             throw new AccountException(AccountErrorCode.ACCOUNT_VALUE_ERROR);
         }
 
-        apiDeleteAdapter.deleteAccount(accountDeleteRequest);
-        accountRepository.delete(account);
+        // 분산 트랜잭션 일관성 문제 해결
+        // 외부 api호출과 로컬 db가 서로 원자성 보장 x
+        // saga패턴 적용하여 구현
+        try {
+            // 1단계: 외부 API 삭제
+            apiDeleteAdapter.deleteAccount(accountDeleteRequest);
+
+            try {
+                // 2단계: 로컬 삭제
+                accountRepository.delete(account);
+                log.info("계좌 삭제 완료 - accountId: {}", accountDeleteRequest.accountId());
+            } catch (Exception e) {
+                // 보상 트랜잭션: 외부 API에 복구 요청 (복구 API가 있다면)
+                log.error("로컬 삭제 실패, 보상 트랜잭션 필요 - accountId: {}",
+                        accountDeleteRequest.accountId(), e);
+                throw new AccountException(AccountErrorCode.ACCOUNT_DELETE_FAILED);
+            }
+        } catch (TranException e) {
+            log.error("외부 API 삭제 실패 - accountId: {}", accountDeleteRequest.accountId(), e);
+            throw e;
+        }
 
     }
 }

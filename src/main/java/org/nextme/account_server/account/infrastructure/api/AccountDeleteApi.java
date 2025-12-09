@@ -54,13 +54,20 @@ public class AccountDeleteApi implements AccountDeleteApiAdapter {
                 JsonNode accountNode = objectMapper.readTree(result);
 
 
-                // 결과코드 뽑아오기
-                String code = accountNode.get("result").get("code").asText();
+                // 결과코드 추출 (null 체크 포함)
+                JsonNode resultNode = accountNode.path("result");
+                JsonNode codeNode = resultNode.path("code");
 
-//                // 정상이 아니라면
-//                if(!code.equals(STATUS_CODE)) {
-//                    throw new TranException(TranErrorCode.TRAN_ERROR_CODE);
-//                }
+                if (codeNode.isMissingNode()) {
+                   log.error("응답에 결과 코드가 없습니다: {}", result);
+                    throw new TranException(TranErrorCode.TRAN_ERROR_CODE);
+                }
+                String code = codeNode.asText();
+
+                if (!code.equals(STATUS_CODE)) {
+                    log.warn("계좌 삭제 실패 - 코드: {}", code);
+                    throw new TranException(TranErrorCode.TRAN_ERROR_CODE);
+                }
 
                 List<AccountDeleteResponse> accountList = new ArrayList<>();
                 if (accountNode.isArray()) {

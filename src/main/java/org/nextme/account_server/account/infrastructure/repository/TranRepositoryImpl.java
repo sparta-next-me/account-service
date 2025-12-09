@@ -17,9 +17,11 @@ public class TranRepositoryImpl implements TranRepositoryCustom{
     public Tran tranRequest(String tranDate, String tranTime, int deposit, int withDraw) {
         QTran tran = QTran.tran;
 
-        return (Tran) queryFactory.selectFrom(tran)
-                .select(tran.tranDate,tran.tranDate,tran.deposit,tran.withDraw)
-                .where((tran.tranDate.eq(tranDate).and(tran.tranTime.eq(tranTime))).and(tran.deposit.eq(deposit).and(tran.withDraw.eq(withDraw))))
+        return queryFactory.selectFrom(tran)
+                .where((tran.tranDate.eq(tranDate)
+                        .and(tran.tranTime.eq(tranTime)))
+                        .and(tran.deposit.eq(deposit)
+                                .and(tran.withDraw.eq(withDraw))))
                 .fetchOne();
 
 
