@@ -27,7 +27,7 @@ import java.util.List;
 public class TranApi implements TranApiAdapter {
 
     private final ObjectMapper objectMapper;
-
+    private final RestClient restClient;
     @Value("${ACCESS_TOKEN}")
     private String accessToken;
 
@@ -37,7 +37,7 @@ public class TranApi implements TranApiAdapter {
         String url = "https://development.codef.io/v1/kr/bank/p/account/transaction-list";
 
         try {
-            ResponseEntity<String> response = RestClient.create()
+            ResponseEntity<String> response = restClient
                     .post()
                     .uri(url)
                     .header("Authorization", accessToken)

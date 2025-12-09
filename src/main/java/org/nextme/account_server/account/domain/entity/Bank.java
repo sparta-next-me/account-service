@@ -2,6 +2,8 @@ package org.nextme.account_server.account.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.nextme.account_server.global.common.jpa.BaseEntity;
+
 
 @Table(name = "p_bank_code",
         uniqueConstraints = @UniqueConstraint(columnNames = {"bank_code", "fin_co_no"}))
@@ -12,7 +14,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class Bank {
+public class Bank extends BaseEntity {
 
     @EmbeddedId
     @Column(name = "bank_id")

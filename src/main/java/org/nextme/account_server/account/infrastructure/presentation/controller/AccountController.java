@@ -2,8 +2,10 @@ package org.nextme.account_server.account.infrastructure.presentation.controller
 
 import lombok.RequiredArgsConstructor;
 import org.nextme.account_server.account.application.account.service.AccountService;
+import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountDeleteRequest;
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountRequest;
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountSelectRequest;
+import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountDeleteResponse;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountResponse;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountSelectResponse;
 import org.nextme.account_server.global.infrastructure.success.CustomResponse;
@@ -41,5 +43,12 @@ public class AccountController {
         AccountSelectRequest accountSelectRequest = new AccountSelectRequest(accountId, bankAccount);
         AccountSelectResponse accountResponse = accountService.getCondition(accountSelectRequest);
         return ResponseEntity.ok(CustomResponse.onSuccess("특정 계좌 정보 조회 되었습니다.",accountResponse));
+    }
+
+    //계좌 삭제
+    @DeleteMapping
+    public ResponseEntity<CustomResponse> deleteAccount(@RequestBody AccountDeleteRequest accountDeleteRequest) {
+        accountService.delete(accountDeleteRequest);
+        return ResponseEntity.ok(CustomResponse.onSuccess("계좌 삭제 되었습니다."));
     }
 }
