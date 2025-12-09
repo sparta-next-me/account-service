@@ -115,6 +115,11 @@ public class AccountService {
             throw new AccountException(AccountErrorCode.ACCOUNT_ID_NOT_FOUND);
         }
 
+        // 요청 값이 일치하지 않을 떄(유저아이디, 계좌아이디, 커넥티드아이디)
+        if(!account.getUserId().equals(accountDeleteRequest.userId()) || !account.getId().getId().equals(accountDeleteRequest.accountId()) || !account.getClientId().equals(accountDeleteRequest.connectedId())) {
+            throw new AccountException(AccountErrorCode.ACCOUNT_VALUE_ERROR);
+        }
+
         apiDeleteAdapter.deleteAccount(accountDeleteRequest);
         accountRepository.delete(account);
 
