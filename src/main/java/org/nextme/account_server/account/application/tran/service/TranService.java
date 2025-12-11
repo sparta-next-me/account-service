@@ -16,6 +16,8 @@ import org.nextme.account_server.account.domain.entity.Tran.TranId;
 import org.nextme.account_server.account.domain.repository.AccountRepository;
 import org.nextme.account_server.account.domain.repository.TranRepository;
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.TranRequest;
+import org.nextme.account_server.account.infrastructure.presentation.dto.request.TranSelectAllRequest;
+import org.nextme.account_server.account.infrastructure.presentation.dto.request.TranSelectRequest;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.TranResponse;
 import org.nextme.account_server.account.infrastructure.repository.TranRepositoryCustom;
 import org.nextme.account_server.account.infrastructure.repository.TranRepositoryImpl;
@@ -40,7 +42,7 @@ public class TranService {
     public TranResponse create(TranRequest request) {
 
         // 필수 입력값을 입력하지 않는다면
-        if(request.organization() == null || request.organization().isEmpty()
+        if(request.accountId() == null || request.organization() == null || request.organization().isEmpty()
                 || request.connectedId() == null || request.connectedId().isEmpty()
                 || request.account() == null || request.account().isEmpty()
                 || request.orderBy() == null || request.orderBy().isEmpty()
@@ -50,16 +52,16 @@ public class TranService {
             throw new TranException(TranErrorCode.TRAN_MISSING_PARAMETER);
         }
 
-        // 본인 계좌번호의 id값 가져옴
-        Account account_id = accountRepository.findByBankAccount(request.account());
+        // 계좌 상태 확인
+        Account account_status = accountRepository.findByIdAndClientIdAndIsDeletedFalse(AccountId.of(request.accountId()),request.connectedId());
 
-        //계좌 아이디가 존재하지 않는다면
-        if(account_id == null) {
+        // 사용자의 계정이 삭제된 계정이라면
+        if(account_status == null) {
             throw new AccountException(AccountErrorCode.ACCOUNT_ID_NOT_FOUND);
         }
 
         // 사용자 아이디가 존재하지 않는다면
-        if(account_id.getUserId() == null) {
+        if(account_status.getUserId() == null) {
             throw new TranException(TranErrorCode.NOT_FOUND_USER_ID);
         }
 
@@ -82,8 +84,8 @@ public class TranService {
 
             tranList = Tran.builder()
                     .tranId(TranId.of(UUID.randomUUID()))
-                    .account(account_id)
-                    .userId(account_id.getUserId())
+                    .account(account_status)
+                    .userId(account_status.getUserId())
                     .tranDate(tran.resAccountTrDate())
                     .tranTime(tran.resAccountTrTime())
                     .withDraw(tran.resAccountOut())
@@ -99,25 +101,50 @@ public class TranService {
     }
 
     // 거래내역 전체조회
-    public List<TranResponse> getAll(UUID accountId) {
-        List<Tran> tranResponse = tranRepository.findByAccountId(AccountId.of(accountId));
+    public List<TranResponse> getAll(TranSelectAllRequest tranSelectAllRequest) {
+
+        // 계좌 상태 확인
+        Account account_status = accountRepository.findByUserIdAndIsDeletedFalse(tranSelectAllRequest.userId());
+
+        // 사용자의 계정이 삭제된 계정이라면
+        if(account_status == null) {
+            throw new AccountException(AccountErrorCode.ACCOUNT_ID_NOT_FOUND);
+        }
+        List<Tran> tranResponse = tranRepository.findByUserId(tranSelectAllRequest.userId());
         return tranResponse.stream().map(TranResponse::of).collect(Collectors.toList());
     }
 
     // 거래내역 단건조회
-    public TranResponse getCondition(UUID tranId, String tranDate) {
-        // 파라미터 입력하지 않았다면
-        if(tranId == null && tranDate==null ) {
+    public TranResponse getCondition(TranSelectRequest tranSelectRequest) {
+
+        // 필수 파라미터를 입력하지 않았다면
+        if (tranSelectRequest.userId() == null) {
             throw new TranException(TranErrorCode.TRAN_MISSING_PARAMETER);
         }
+
+        if(tranSelectRequest.tranTime() == null && tranSelectRequest.tranDate() == null &&
+        tranSelectRequest.deposit() == -1 && tranSelectRequest.withdraw() == -1 ){
+            throw new TranException(TranErrorCode.TRAN_MISSING_PARAMETER);
+        }
+
+        // 계좌 상태 확인
+        Account account_status = accountRepository.findByUserIdAndIsDeletedFalse(tranSelectRequest.userId());
+
+        // 사용자의 계정이 삭제된 계정이라면
+        if(account_status == null) {
+            throw new AccountException(AccountErrorCode.ACCOUNT_ID_NOT_FOUND);
+        }
+
+
         // 조건 요청값에 대한 조회
-        Tran tran = tranRepository.findByTranIdOrTranDate(tranId, tranDate);
+        Tran existing = tranRepositoryCustom.tranSelectRequest(tranSelectRequest.userId(),tranSelectRequest.tranDate(), tranSelectRequest.tranTime(), tranSelectRequest.deposit(),tranSelectRequest.withdraw());
+
 
         // 조회된 게 없다면
-        if(tran == null) {
+        if(existing == null) {
             throw new TranException(TranErrorCode.NOT_FOUND_TRAN);
         }else{
-            return TranResponse.of(tran);
+            return TranResponse.of(existing);
         }
     }
 }

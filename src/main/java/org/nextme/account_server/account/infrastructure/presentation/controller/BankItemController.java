@@ -3,6 +3,7 @@ package org.nextme.account_server.account.infrastructure.presentation.controller
 
 import lombok.RequiredArgsConstructor;
 import org.nextme.account_server.account.application.bankItem.service.BankItemService;
+import org.nextme.account_server.account.infrastructure.presentation.dto.response.BanKItemReportResponse;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.BankItemResponse;
 import org.nextme.account_server.global.infrastructure.success.CustomResponse;
 import org.springframework.http.ResponseEntity;
@@ -54,6 +55,15 @@ public class BankItemController {
 
         return ResponseEntity.ok(CustomResponse.onSuccess("해당은행의 금융상품 단건 조회 되었습니다.",bankResponse));
     }
+
+    @GetMapping("/report")
+    // 미래설계에서 백터화 시키키 위한 금융상품 정보
+    public List<BanKItemReportResponse> getEmbeddingReport() {
+        return bankItemService.getEmbeddingReport();
+    }
+
+
+
 
 
 }

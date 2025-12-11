@@ -2,6 +2,7 @@ package org.nextme.account_server.account.domain.entity.Tran;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.nextme.account_server.account.domain.entity.Account;
 import org.nextme.account_server.global.common.jpa.BaseEntity;
 
@@ -40,14 +41,17 @@ public class Tran extends BaseEntity {
     private String tranTime;
 
     @Column(name = "withdraw")
+    @ColumnDefault("-1")
     // 출금금액
     private int withDraw;
 
     @Column(name = "deposit")
+    @ColumnDefault("-1")
     // 입금금액
     private int deposit;
 
     @Column(name = "current_balance", nullable = false)
+    @ColumnDefault("-1")
     // 현재잔액
     private int currentBalance;
 

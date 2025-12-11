@@ -58,9 +58,9 @@ public class Account extends BaseEntity {
     private UUID userId;
 
     @ColumnDefault("false")
-    @Column(nullable = false)
+    @Column(nullable = false,name = "is_deleted")
     // 계좌상태
-    private boolean is_deleted;
+    private boolean isDeleted;
 
 
 
