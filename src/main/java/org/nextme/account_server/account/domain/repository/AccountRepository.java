@@ -19,7 +19,14 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
 
     List<Account> findByClientId(String clientId);
 
-    Account findByUserId(UUID userId);
+    List<Account>findByUserId(UUID userId);
 
     Account findById(AccountId of);
+
+
+    Account findByUserIdAndIsDeletedFalse(UUID userId);
+
+    Account findByIdAndIsDeletedFalse(AccountId of);
+
+    Account findByIdAndClientIdAndIsDeletedFalse(AccountId id, String connectedId);
 }

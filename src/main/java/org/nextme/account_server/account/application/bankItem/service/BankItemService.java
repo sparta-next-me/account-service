@@ -18,6 +18,7 @@ import org.nextme.account_server.account.domain.entity.BankItem.BankItemType;
 import org.nextme.account_server.account.domain.entity.BankItem.JoinEligibility;
 import org.nextme.account_server.account.domain.repository.BankItemRepository;
 import org.nextme.account_server.account.domain.repository.BankRepository;
+import org.nextme.account_server.account.infrastructure.presentation.dto.response.BanKItemReportResponse;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.BankItemResponse;
 import org.springframework.stereotype.Service;
 
@@ -187,5 +188,17 @@ public class BankItemService {
             throw new BankItemException(BankItemErrorCode.BANK_ITEM_NOT_FOUND);
         }
         return BankItemResponse.of(response);
+    }
+
+    // 분석을 위한 금융상품 정보 string 처리하는 로직
+    public List<BanKItemReportResponse> getEmbeddingReport() {
+        List<BankItem> bankItem =  bankItemRepository.findAll();
+
+        // 금융상품이 없다면
+        if(bankItem == null) {
+            throw new BankItemException(BankItemErrorCode.BANK_ITEM_NOT_FOUND);
+        }
+
+        return bankItem.stream().map(BanKItemReportResponse::of).collect(Collectors.toList());
     }
 }

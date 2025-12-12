@@ -20,8 +20,8 @@ import org.nextme.account_server.account.infrastructure.exception.ApiException;
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountDeleteRequest;
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountRequest;
 
+import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountSelectAllRequest;
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountSelectRequest;
-import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountDeleteResponse;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountResponse;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountSelectResponse;
 import org.springframework.stereotype.Service;
@@ -54,7 +54,7 @@ public class AccountService {
         Account existing = accountRepository.findByClientIdAndBankAccount(account.connectedId(), account_Number);
 
         // 계좌번호 마스킹 처리
-        //String account_masked = account_Number.substring(0,3)+"****"+ account_Number.substring(7);
+        String account_masked = account_Number.substring(0,3)+"****"+ account_Number.substring(7);
 
 
         // 사용자가 입력한 은행코드 있는지 확인
@@ -76,7 +76,7 @@ public class AccountService {
                 .bank(bankEntity)
                 .userName(account.userName())
                 .clientId(account.connectedId())
-                .bankAccount( account_Number)
+                .bankAccount(account_masked)
                 .userId(UUID.randomUUID())
                 .build();
         accountRepository.save(existing);
@@ -86,8 +86,8 @@ public class AccountService {
     }
 
     // 계좌 전체 조회
-    public List<AccountSelectResponse> getAll(String clientId) {
-        List<Account>  accounts = accountRepository.findByClientId(clientId);
+    public List<AccountSelectResponse> getAll(AccountSelectAllRequest accountSelectAllRequest) {
+        List<Account> accounts = accountRepository.findByUserId(accountSelectAllRequest.userId());
         return accounts.stream().map(AccountSelectResponse::of).collect(Collectors.toList());
     }
 
@@ -97,7 +97,7 @@ public class AccountService {
         // 조건 요청값에 대한 조회
         Account account = accountRepository.findByIdOrBankAccount(
                 AccountId.of(accountSelectRequest.accountId()),
-                accountSelectRequest.bankAccount());
+                accountSelectRequest.connectdId());
 
 
         // 조회된 게 없다면

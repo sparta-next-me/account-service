@@ -3,6 +3,8 @@ package org.nextme.account_server.account.infrastructure.presentation.controller
 import lombok.RequiredArgsConstructor;
 import org.nextme.account_server.account.application.tran.service.TranService;
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.TranRequest;
+import org.nextme.account_server.account.infrastructure.presentation.dto.request.TranSelectAllRequest;
+import org.nextme.account_server.account.infrastructure.presentation.dto.request.TranSelectRequest;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.TranResponse;
 import org.nextme.account_server.global.infrastructure.success.CustomResponse;
 import org.springframework.http.ResponseEntity;
@@ -25,21 +27,22 @@ public class TranController {
         return ResponseEntity.ok(CustomResponse.onSuccess("거래내역 생성 되었습니다.",tranResponse));
     }
 
-    @GetMapping("/{accountId}")
+    @PostMapping("/all")
     // 거래내역 전체조회
-    public ResponseEntity<CustomResponse<List<TranResponse>>> getAccount(@PathVariable UUID accountId) {
-        List<TranResponse> tranResponse = tranService.getAll(accountId);
+    public ResponseEntity<CustomResponse<List<TranResponse>>> getAccount(@RequestBody TranSelectAllRequest tranSelectAllRequest) {
+        List<TranResponse> tranResponse = tranService.getAll(tranSelectAllRequest);
 
         return ResponseEntity.ok(CustomResponse.onSuccess("거래내역 전체 조회 되었습니다.",tranResponse));
     }
 
-    @GetMapping("/condition")
-    // 거래내역 단건 조회 (아이디, 거래일자)
-    public ResponseEntity<CustomResponse<TranResponse>> getCondition(@RequestParam(required = false) UUID tranId, @RequestParam(required = false) String tranDate) {
-        TranResponse tranResponse = tranService.getCondition(tranId, tranDate);
+    @PostMapping("/condition")
+    // 거래내역 단건 조회
+    public ResponseEntity<CustomResponse<TranResponse>> getCondition(@RequestBody TranSelectRequest tranSelectRequest) {
+        TranResponse tranResponse = tranService.getCondition(tranSelectRequest);
         return ResponseEntity.ok(CustomResponse.onSuccess("거래내역 단건 조회 되었습니다.",tranResponse));
 
     }
+
 
 
 
