@@ -1,4 +1,4 @@
-package org.nextme.infrastructure.exception;
+package org.nextme.account_server.global.infrastructure.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +14,7 @@ public enum ErrorCode {
     FORBIDDEN(HttpStatus.FORBIDDEN, "FORBIDDEN", "Forbidden"),
     NOT_FOUND(HttpStatus.NOT_FOUND, "NOT_FOUND", "Not Found"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "Internal Server Error"),
+    DB_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "DB_ERROR", "DB 저장에 실패하였습니다."),
 
     // validation
     REQUEST_VALIDATION_ERROR(HttpStatus.PRECONDITION_FAILED, "REQUEST_VALIDATION_ERROR", "Request value is not valid"),
@@ -22,6 +23,7 @@ public enum ErrorCode {
     DUPLICATED_USERNAME(HttpStatus.CONFLICT, "DUPLICATED_USERNAME", "Username is already taken."),
     DUPLICATED_EMAIL(HttpStatus.CONFLICT, "DUPLICATED_EMAIL", "Email is already in use."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND,"USER_NOT_FOUND", "User Not Found");
+
 
     private final HttpStatus httpStatus;
     private final String code;
