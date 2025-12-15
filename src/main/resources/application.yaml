@@ -24,22 +24,25 @@ spring:
     default-schema: accountservice
     baseline-on-migrate: true
 
-
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: ${DEFAULT_ZONE}
-config:
-  import: 'optional:configserver:'
+  config:
+    import: 'optional:configserver:'
   cloud:
     config:
       discovery:
         enabled: true
         service-id: config-server
+
+
+eureka:
+  instance:
+    prefer-ip-address: false
+    hostname: localhost
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${DEFAULT_ZONE}
+
 
 
 # OPEN DOC API 설정
