@@ -25,4 +25,5 @@ public class TranId {
     public static TranId of(String id) {
         return TranId.of(UUID.randomUUID());
     }
+
 }
