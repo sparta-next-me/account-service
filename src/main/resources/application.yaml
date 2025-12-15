@@ -23,6 +23,14 @@ spring:
     schemas: accountservice
     default-schema: accountservice
     baseline-on-migrate: true
+    
+  config:
+    import: 'optional:configserver:'
+    cloud:
+      config:
+        discovery:
+          enabled: true
+          service-id: config-server
 
 
 eureka:
@@ -33,13 +41,7 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: ${DEFAULT_ZONE}
-config:
-  import: 'optional:configserver:'
-  cloud:
-    config:
-      discovery:
-        enabled: true
-        service-id: config-server
+
 
 
 # OPEN DOC API 설정
