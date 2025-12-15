@@ -55,9 +55,6 @@ public class Tran extends BaseEntity {
     // 현재잔액
     private int currentBalance;
 
-//    @Column(name = "tran_type", nullable = false)
-//    @Enumerated(EnumType.STRING)
-//    // 거래구분
-//    private TranType tranType;
+    private String counterPartyName; // 거래 입출금명
 
 }
