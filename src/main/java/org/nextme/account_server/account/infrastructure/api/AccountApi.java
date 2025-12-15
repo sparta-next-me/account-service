@@ -26,8 +26,8 @@ public class AccountApi implements AccountApiAdapter {
 
     private final ObjectMapper objectMapper;
 
-    //@Value("${ACCESS_TOKEN}")
-    private String accessToken ="Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXJ2aWNlX3R5cGUiOiIxIiwic2NvcGUiOlsicmVhZCJdLCJzZXJ2aWNlX25vIjoiMDAwMDA2NDMzMDAyIiwiZXhwIjoxNzY2MDI0NDc1LCJhdXRob3JpdGllcyI6WyJJTlNVUkFOQ0UiLCJQVUJMSUMiLCJCQU5LIiwiRVRDIiwiU1RPQ0siLCJDQVJEIl0sImp0aSI6IjllNmNhNDgyLTRiNTYtNDJlOS05ZTkyLTY0ZGQ2OWU4YzY3MiIsImNsaWVudF9pZCI6IjQyNzg2Yjg1LTgwMzktNDU3ZC1hNzkzLTRhMjkwN2IzOGU1MCJ9.gNKJnz0s2GT2f5kwmDujmHHZdDj1YiqZkHHvI9_b4q94nxCSzkRDOjpjRHHRjjJYdIA_WjezRZ2AeEuzJy_QKqEC8yE7MjtpN-S9gDUWJo07BjARmN29j0-v3FfHQ4PkKppfKez0K3s5zM3gNO4p--Cz8Eu40Ceke9NlS2PepLF58-hSlGlkrGtITdTHskaNERi5lSwt-0xbZjk0mcV6eEim5qlaCBpjeWeF8qzLTsJBQWIM7YCZ2yTblzEfJHpv0wBdJNG2P-f5qQwuYtV9hHyC1tUwdKMEFIGy42T9gvEVkM31WAwN7BQdHsodArKbWe8qCFDylPve3LL08VUMRA";
+    @Value("${ACCESS_TOKEN}")
+    private String accessToken;
 
 
     @Override
@@ -40,7 +40,7 @@ public class AccountApi implements AccountApiAdapter {
             ResponseEntity<String> response = RestClient.create()
                     .post()
                     .uri(url)
-                    .header("Authorization",   accessToken)
+                    .header("Authorization",   "Bearer " +accessToken)
                     .body(request)
                     .retrieve()
                     .toEntity(String.class);
