@@ -6,11 +6,14 @@ import org.nextme.account_server.account.application.account.exception.AccountEr
 import org.nextme.account_server.account.application.account.exception.AccountException;
 import org.nextme.account_server.account.application.bank.exception.BankErrorCode;
 import org.nextme.account_server.account.application.bank.exception.BankException;
+import org.nextme.account_server.account.application.bankItem.exception.BankItemErrorCode;
+import org.nextme.account_server.account.application.bankItem.exception.BankItemException;
 import org.nextme.account_server.account.application.tran.exception.TranErrorCode;
 import org.nextme.account_server.account.application.tran.exception.TranException;
 import org.nextme.account_server.account.domain.TranApiAdapter;
 import org.nextme.account_server.account.domain.entity.Account;
 import org.nextme.account_server.account.domain.entity.AccountId;
+import org.nextme.account_server.account.domain.entity.BankItem.BankItem;
 import org.nextme.account_server.account.domain.entity.Tran.Tran;
 import org.nextme.account_server.account.domain.entity.Tran.TranId;
 import org.nextme.account_server.account.domain.repository.AccountRepository;
@@ -18,15 +21,14 @@ import org.nextme.account_server.account.domain.repository.TranRepository;
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.TranRequest;
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.TranSelectAllRequest;
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.TranSelectRequest;
+import org.nextme.account_server.account.infrastructure.presentation.dto.response.BanKItemReportResponse;
+import org.nextme.account_server.account.infrastructure.presentation.dto.response.TranFeignResponse;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.TranResponse;
 import org.nextme.account_server.account.infrastructure.repository.TranRepositoryCustom;
 import org.nextme.account_server.account.infrastructure.repository.TranRepositoryImpl;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -123,7 +125,7 @@ public class TranService {
         }
 
         if(tranSelectRequest.tranTime() == null && tranSelectRequest.tranDate() == null &&
-        tranSelectRequest.deposit() == -1 && tranSelectRequest.withdraw() == -1 ){
+                tranSelectRequest.deposit() == -1 && tranSelectRequest.withdraw() == -1 ){
             throw new TranException(TranErrorCode.TRAN_MISSING_PARAMETER);
         }
 
@@ -147,4 +149,16 @@ public class TranService {
             return TranResponse.of(existing);
         }
     }
+
+    public List<TranFeignResponse> getEmbeddingTran(UUID userId) {
+        List<Tran> tranList = tranRepository.findByUserId(userId);
+
+        // 거래내역이 없다면
+        if(tranList.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return tranList.stream().map(TranFeignResponse::of).collect(Collectors.toList());
+    }
+
 }
