@@ -23,14 +23,14 @@ spring:
     schemas: accountservice
     default-schema: accountservice
     baseline-on-migrate: true
-    
+
   config:
     import: 'optional:configserver:'
-    cloud:
-      config:
-        discovery:
-          enabled: true
-          service-id: config-server
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config-server
 
 
 eureka:
