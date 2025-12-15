@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("v1/tran")
+@RequestMapping("v1/account/tran")
 @RequiredArgsConstructor
 public class TranController {
     private final TranService tranService;

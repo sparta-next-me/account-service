@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("v1/financial-products")
+@RequestMapping("v1/account/financial-products")
 @RequiredArgsConstructor
 public class BankItemController {
 
