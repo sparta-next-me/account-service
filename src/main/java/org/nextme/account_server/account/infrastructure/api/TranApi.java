@@ -40,7 +40,7 @@ public class TranApi implements TranApiAdapter {
             ResponseEntity<String> response = restClient
                     .post()
                     .uri(url)
-                    .header("Authorization", accessToken)
+                    .header("Authorization", "Bearer " + accessToken.trim())
                     .body(request)
                     .retrieve()
                     .toEntity(String.class);

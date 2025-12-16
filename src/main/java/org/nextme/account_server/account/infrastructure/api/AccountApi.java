@@ -40,7 +40,7 @@ public class AccountApi implements AccountApiAdapter {
             ResponseEntity<String> response = RestClient.create()
                     .post()
                     .uri(url)
-                    .header("Authorization",   "Bearer " +accessToken)
+                    .header("Authorization",   "Bearer " +accessToken.trim())
                     .body(request)
                     .retrieve()
                     .toEntity(String.class);

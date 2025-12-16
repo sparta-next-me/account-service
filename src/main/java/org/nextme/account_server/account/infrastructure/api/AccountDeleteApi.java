@@ -41,7 +41,7 @@ public class AccountDeleteApi implements AccountDeleteApiAdapter {
                 ResponseEntity<String> response = RestClient.create()
                     .post()
                     .uri(url)
-                    .header("Authorization", accessToken)
+                    .header("Authorization", "Bearer " + accessToken)
                     .body(request)
                     .retrieve()
                     .toEntity(String.class);
