@@ -2,15 +2,15 @@ pipeline {
     agent any
 
     environment {
-        APP_NAME        = "usergoal-service"
+        APP_NAME        = "account-service"
 
         // GHCR 레지스트리 정보
         REGISTRY        = "ghcr.io"
         GH_OWNER        = "sparta-next-me"
-        IMAGE_REPO      = "usergoal-service"
+        IMAGE_REPO      = "account-service"
         FULL_IMAGE      = "${REGISTRY}/${GH_OWNER}/${IMAGE_REPO}:latest"
 
-        CONTAINER_NAME  = "usergoal-service"
+        CONTAINER_NAME  = "account-service"
         HOST_PORT       = "11115"
         CONTAINER_PORT  = "11115"
     }
