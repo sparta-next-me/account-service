@@ -33,54 +33,103 @@ public class TranApi implements TranApiAdapter {
     private String accessToken;
 
 
+//    @Override
+//    public List<TranResponse> getTranList(TranRequest request) {
+//        String url = "https://development.codef.io/v1/kr/bank/p/account/transaction-list";
+//
+//        ResponseEntity<String> response = restClient
+//                .post()
+//                .uri(url)
+//                .header("Authorization", "Bearer " + accessToken.trim())
+//                .body(request)
+//                .retrieve()
+//                .toEntity(String.class);
+//
+//        // 호출하여 상태값 확인
+//        HttpStatusCode status = response.getStatusCode();
+//
+//        System.out.println(status + " 상태");
+//        log.info(status + " 상태");
+//        System.out.println(response.getBody() + " 응답");
+//        log.info(response.getBody() + " 응답");
+//        System.out.println(accessToken + " 토큰값");
+//        log.info(accessToken + " 토큰값");
+//
+//        try {
+//
+//
+//
+//            if (!response.getStatusCode().is2xxSuccessful()) {
+//                return new ArrayList<>();
+//            }
+//
+//            String decoded = URLDecoder.decode(response.getBody(), StandardCharsets.UTF_8);
+//            JsonNode tranListNode = objectMapper.readTree(decoded)
+//                    .path("data")
+//                    .path("resTrHistoryList");
+//
+//            List<TranResponse> tranList = new ArrayList<>();
+//            if (tranListNode.isArray()) {
+//                for (JsonNode node : tranListNode) {
+//                    TranResponse tran = objectMapper.treeToValue(node, TranResponse.class);
+//                    tranList.add(tran);
+//                }
+//            }
+//
+//            return tranList;
+//
+//        } catch (Exception e) {
+//            log.error("거래내역 호출 실패", e);
+//            throw new ApplicationException(ErrorCode.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
     @Override
     public List<TranResponse> getTranList(TranRequest request) {
         String url = "https://development.codef.io/v1/kr/bank/p/account/transaction-list";
 
-        ResponseEntity<String> response = restClient
+        ResponseEntity<byte[]> response = restClient
                 .post()
                 .uri(url)
                 .header("Authorization", "Bearer " + accessToken.trim())
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
                 .body(request)
                 .retrieve()
-                .toEntity(String.class);
+                .toEntity(byte[].class);
 
-        // 호출하여 상태값 확인
         HttpStatusCode status = response.getStatusCode();
+        log.info("CODEF status={}", status);
+        log.info("contentType={}", response.getHeaders().getContentType());
+        log.info("accessToken={}", accessToken);
 
-        System.out.println(status + " 상태");
-        log.info(status + " 상태");
-        System.out.println(response.getBody() + " 응답");
-        log.info(response.getBody() + " 응답");
-        System.out.println(accessToken + " 토큰값");
-        log.info(accessToken + " 토큰값");
+
+        if (!status.is2xxSuccessful()) {
+            log.error("CODEF 호출 실패 status={}", status);
+            return new ArrayList<>();
+        }
 
         try {
+            String body = new String(response.getBody(), StandardCharsets.UTF_8);
+            log.info("CODEF response={}", body);
 
-
-
-            if (!response.getStatusCode().is2xxSuccessful()) {
-                return new ArrayList<>();
-            }
-
-            String decoded = URLDecoder.decode(response.getBody(), StandardCharsets.UTF_8);
-            JsonNode tranListNode = objectMapper.readTree(decoded)
+            JsonNode tranListNode = objectMapper.readTree(body)
                     .path("data")
                     .path("resTrHistoryList");
 
             List<TranResponse> tranList = new ArrayList<>();
             if (tranListNode.isArray()) {
                 for (JsonNode node : tranListNode) {
-                    TranResponse tran = objectMapper.treeToValue(node, TranResponse.class);
-                    tranList.add(tran);
+                    tranList.add(objectMapper.treeToValue(node, TranResponse.class));
                 }
             }
 
             return tranList;
 
         } catch (Exception e) {
-            log.error("거래내역 호출 실패", e);
+            log.error("거래내역 파싱 실패", e);
             throw new ApplicationException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
+
 }
