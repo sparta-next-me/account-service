@@ -47,12 +47,7 @@ public class AccountApi implements AccountApiAdapter {
 
             // 호출하여 상태값 확인
             HttpStatusCode status = response.getStatusCode();
-            System.out.println(status + " 상태");
-            log.info(status + " 상태");
-            System.out.println(response.getBody() + " 응답");
-            log.info(response.getBody() + " 응답");
-            System.out.println(accessToken + " 토큰값");
-            log.info(accessToken + " 토큰값");
+
 
             // 상태값이 2xx일 때만
             if (status.is2xxSuccessful()) {

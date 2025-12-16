@@ -11,6 +11,7 @@ import org.nextme.account_server.account.infrastructure.presentation.dto.respons
 import org.nextme.account_server.global.infrastructure.exception.ApplicationException;
 import org.nextme.account_server.global.infrastructure.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -44,6 +45,17 @@ public class TranApi implements TranApiAdapter {
                     .body(request)
                     .retrieve()
                     .toEntity(String.class);
+
+
+            // 호출하여 상태값 확인
+            HttpStatusCode status = response.getStatusCode();
+
+            System.out.println(status + " 상태");
+            log.info(status + " 상태");
+            System.out.println(response.getBody() + " 응답");
+            log.info(response.getBody() + " 응답");
+            System.out.println(accessToken + " 토큰값");
+            log.info(accessToken + " 토큰값");
 
             if (!response.getStatusCode().is2xxSuccessful()) {
                 return new ArrayList<>();
