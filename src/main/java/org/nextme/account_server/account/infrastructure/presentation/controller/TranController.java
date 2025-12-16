@@ -24,8 +24,6 @@ public class TranController {
     @PostMapping
     // 거래내역 api 호출 후 db 저장
     public ResponseEntity<CustomResponse<TranResponse>> createAccount(@RequestBody TranRequest request) {
-
-        System.out.println("여기 옴");
         TranResponse tranResponse = tranService.create(request);
         return ResponseEntity.ok(CustomResponse.onSuccess("거래내역 생성 되었습니다.",tranResponse));
     }

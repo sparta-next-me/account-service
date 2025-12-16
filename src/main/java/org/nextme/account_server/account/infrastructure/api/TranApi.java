@@ -19,6 +19,7 @@ import org.springframework.web.client.RestClient;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -35,15 +36,19 @@ public class TranApi implements TranApiAdapter {
 
     @Override
     public List<TranResponse> getTranList(TranRequest request) {
+
+        System.out.println("여기 왔음");
         String url = "https://development.codef.io/v1/kr/bank/p/account/transaction-list";
 
-        ResponseEntity<String> response = restClient
+        ResponseEntity<byte[]> response = restClient
                 .post()
                 .uri(url)
                 .header("Authorization", "Bearer " + accessToken.trim())
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
                 .body(request)
                 .retrieve()
-                .toEntity(String.class);
+                .toEntity(byte[].class);
 
         // 호출하여 상태값 확인
         HttpStatusCode status = response.getStatusCode();
@@ -63,10 +68,12 @@ public class TranApi implements TranApiAdapter {
                 return new ArrayList<>();
             }
 
-            String decoded = URLDecoder.decode(response.getBody(), StandardCharsets.UTF_8);
+            String decoded = URLDecoder.decode(Arrays.toString(response.getBody()), StandardCharsets.UTF_8);
             JsonNode tranListNode = objectMapper.readTree(decoded)
                     .path("data")
                     .path("resTrHistoryList");
+
+            log.info(tranListNode.toString() + " 디코딩");
 
             List<TranResponse> tranList = new ArrayList<>();
             if (tranListNode.isArray()) {
