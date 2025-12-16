@@ -43,13 +43,15 @@ public class AccountService {
     
     // 계좌 연동
     public AccountResponse create(AccountRequest account) {
+        log.info("서비스 쪽 요청 값", account);
         // 필수 요청값을 입력하지 않았을 때
         if(account.connectedId() == null || account.connectedId().isEmpty()){
             throw new ApiException(ApiErrorCode.API_MISSING_PARAMETER);
         }
 
+        log.info("여기 옴");
         String account_Number = apiAdapter.getAccount(account);
-
+        log.info("외부 요청 넘김");
         //커넥티드아이디와 계좌번호가 이미 있는지 확인
         Account existing = accountRepository.findByClientIdAndBankAccount(account.connectedId(), account_Number);
 
