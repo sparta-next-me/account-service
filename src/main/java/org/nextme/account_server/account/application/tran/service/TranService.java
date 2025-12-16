@@ -43,7 +43,6 @@ public class TranService {
 
     public TranResponse create(TranRequest request) {
 
-        System.out.println("여기 옴");
         // 필수 입력값을 입력하지 않는다면
         if(request.accountId() == null || request.organization() == null || request.organization().isEmpty()
                 || request.connectedId() == null || request.connectedId().isEmpty()
