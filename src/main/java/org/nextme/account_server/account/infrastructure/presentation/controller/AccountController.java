@@ -1,6 +1,7 @@
 package org.nextme.account_server.account.infrastructure.presentation.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.nextme.account_server.account.application.account.service.AccountService;
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountDeleteRequest;
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountRequest;
@@ -19,14 +20,17 @@ import java.util.UUID;
 @RestController
 @RequestMapping("v1/account")
 @RequiredArgsConstructor
+@Slf4j
 public class AccountController {
     private final AccountService accountService;
 
     //계좌 연동(생성)
     @PostMapping
     public ResponseEntity<CustomResponse<AccountResponse>> createAccount(@RequestBody AccountRequest account) {
+        log.info("createAccount: {}", account);
 
         AccountResponse accountResponse = accountService.create(account);
+        log.info("서비스에서 넘어옴");
         return ResponseEntity.ok(CustomResponse.onSuccess("계정 연동 되었습니다.",accountResponse));
     }
 
