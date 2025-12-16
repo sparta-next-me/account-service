@@ -40,15 +40,15 @@ public class TranApi implements TranApiAdapter {
         System.out.println("여기 왔음");
         String url = "https://development.codef.io/v1/kr/bank/p/account/transaction-list";
 
-        ResponseEntity<byte[]> response = restClient
+        ResponseEntity<String> response = restClient
                 .post()
                 .uri(url)
                 .header("Authorization", "Bearer " + accessToken.trim())
-                .header("Content-Type", "application/json")
-                .header("Accept", "application/json")
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                .accept(org.springframework.http.MediaType.APPLICATION_JSON)
                 .body(request)
                 .retrieve()
-                .toEntity(byte[].class);
+                .toEntity(String.class);
 
         // 호출하여 상태값 확인
         HttpStatusCode status = response.getStatusCode();
@@ -63,12 +63,11 @@ public class TranApi implements TranApiAdapter {
         try {
 
 
-
             if (!response.getStatusCode().is2xxSuccessful()) {
                 return new ArrayList<>();
             }
 
-            String decoded = URLDecoder.decode(Arrays.toString(response.getBody()), StandardCharsets.UTF_8);
+            String decoded = URLDecoder.decode(response.getBody(), StandardCharsets.UTF_8);
             JsonNode tranListNode = objectMapper.readTree(decoded)
                     .path("data")
                     .path("resTrHistoryList");
@@ -90,53 +89,4 @@ public class TranApi implements TranApiAdapter {
             throw new ApplicationException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
-
-//    @Override
-//    public List<TranResponse> getTranList(TranRequest request) {
-//        String url = "https://development.codef.io/v1/kr/bank/p/account/transaction-list";
-//
-//        ResponseEntity<byte[]> response = restClient
-//                .post()
-//                .uri(url)
-//                .header("Authorization", "Bearer " + accessToken.trim())
-//                .header("Content-Type", "application/json")
-//                .header("Accept", "application/json")
-//                .body(request)
-//                .retrieve()
-//                .toEntity(byte[].class);
-//
-//        HttpStatusCode status = response.getStatusCode();
-//        log.info("CODEF status={}", status);
-//        log.info("contentType={}", response.getHeaders().getContentType());
-//        log.info("accessToken={}", accessToken);
-//
-//
-//        if (!status.is2xxSuccessful()) {
-//            log.error("CODEF 호출 실패 status={}", status);
-//            return new ArrayList<>();
-//        }
-//
-//        try {
-//            String body = new String(response.getBody(), StandardCharsets.UTF_8);
-//            log.info("CODEF response={}", body);
-//
-//            JsonNode tranListNode = objectMapper.readTree(body)
-//                    .path("data")
-//                    .path("resTrHistoryList");
-//
-//            List<TranResponse> tranList = new ArrayList<>();
-//            if (tranListNode.isArray()) {
-//                for (JsonNode node : tranListNode) {
-//                    tranList.add(objectMapper.treeToValue(node, TranResponse.class));
-//                }
-//            }
-//
-//            return tranList;
-//
-//        } catch (Exception e) {
-//            log.error("거래내역 파싱 실패", e);
-//            throw new ApplicationException(ErrorCode.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-
 }
