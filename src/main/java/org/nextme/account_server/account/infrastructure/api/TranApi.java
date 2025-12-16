@@ -152,12 +152,14 @@ public class TranApi implements TranApiAdapter {
         }
 
         try {
-            // ❗ 전체 URLDecoder 금지 (JSON 구조 유지)
-            JsonNode root = objectMapper.readTree(body);
 
-            JsonNode tranListNode = root
+            String decoded = URLDecoder.decode(response.getBody(), StandardCharsets.UTF_8);
+            JsonNode tranListNode = objectMapper.readTree(decoded)
                     .path("data")
                     .path("resTrHistoryList");
+
+            log.info(tranListNode.toString() + " 디코딩");
+
 
             List<TranResponse> tranList = new ArrayList<>();
 
