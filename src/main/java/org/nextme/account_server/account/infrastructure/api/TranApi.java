@@ -37,25 +37,27 @@ public class TranApi implements TranApiAdapter {
     public List<TranResponse> getTranList(TranRequest request) {
         String url = "https://development.codef.io/v1/kr/bank/p/account/transaction-list";
 
+        ResponseEntity<String> response = restClient
+                .post()
+                .uri(url)
+                .header("Authorization", "Bearer " + accessToken.trim())
+                .body(request)
+                .retrieve()
+                .toEntity(String.class);
+
+        // 호출하여 상태값 확인
+        HttpStatusCode status = response.getStatusCode();
+
+        System.out.println(status + " 상태");
+        log.info(status + " 상태");
+        System.out.println(response.getBody() + " 응답");
+        log.info(response.getBody() + " 응답");
+        System.out.println(accessToken + " 토큰값");
+        log.info(accessToken + " 토큰값");
+
         try {
-            ResponseEntity<String> response = restClient
-                    .post()
-                    .uri(url)
-                    .header("Authorization", "Bearer " + accessToken.trim())
-                    .body(request)
-                    .retrieve()
-                    .toEntity(String.class);
 
 
-            // 호출하여 상태값 확인
-            HttpStatusCode status = response.getStatusCode();
-
-            System.out.println(status + " 상태");
-            log.info(status + " 상태");
-            System.out.println(response.getBody() + " 응답");
-            log.info(response.getBody() + " 응답");
-            System.out.println(accessToken + " 토큰값");
-            log.info(accessToken + " 토큰값");
 
             if (!response.getStatusCode().is2xxSuccessful()) {
                 return new ArrayList<>();
@@ -77,7 +79,7 @@ public class TranApi implements TranApiAdapter {
             return tranList;
 
         } catch (Exception e) {
-            log.error("계좌 조회 API 호출 실패", e);
+            log.error("거래내역 호출 실패", e);
             throw new ApplicationException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
