@@ -1,11 +1,13 @@
 package org.nextme.account_server.account.infrastructure.presentation.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import org.nextme.account_server.account.domain.entity.Tran.Tran;
 
 import java.time.LocalDateTime;
 
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record TranResponse(
         String resAccountTrDate, // 거래일자
         String resAccountTrTime, // 거래시각
