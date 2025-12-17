@@ -3,15 +3,15 @@ package org.nextme.account_server.account.infrastructure.presentation.controller
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.nextme.account_server.account.application.account.service.AccountService;
-import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountDeleteRequest;
-import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountRequest;
-import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountSelectAllRequest;
-import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountSelectRequest;
+import org.nextme.account_server.account.infrastructure.presentation.dto.request.*;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountDeleteResponse;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountResponse;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountSelectResponse;
 import org.nextme.account_server.global.infrastructure.success.CustomResponse;
+import org.nextme.common.security.UserPrincipal;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,15 +24,21 @@ import java.util.UUID;
 public class AccountController {
     private final AccountService accountService;
 
-    //계좌 연동(생성)
-    @PostMapping
-    public ResponseEntity<CustomResponse<AccountResponse>> createAccount(@RequestBody AccountRequest account) {
-        log.info("createAccount: {}", account);
+    // 커넥티드 아이디 생성
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("test")
+    public ResponseEntity<CustomResponse<AccountResponse>> createAccount(@RequestBody AccountCreateRequest account, @AuthenticationPrincipal UserPrincipal principal) {
 
-        AccountResponse accountResponse = accountService.create(account);
-        log.info("서비스에서 넘어옴");
+        AccountResponse accountResponse = accountService.createConnectedId(account, UUID.fromString(principal.userId()));
         return ResponseEntity.ok(CustomResponse.onSuccess("계정 연동 되었습니다.",accountResponse));
     }
+    //계좌 연동(생성)
+//    @PostMapping
+//    public ResponseEntity<CustomResponse<AccountResponse>> createAccount(@RequestBody AccountRequest account) {
+//
+//        AccountResponse accountResponse = accountService.create(account);
+//        return ResponseEntity.ok(CustomResponse.onSuccess("계정 연동 되었습니다.",accountResponse));
+//    }
 
     // 본인 계좌 전체 조회
     @PostMapping("/user-account")
