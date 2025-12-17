@@ -129,7 +129,7 @@ public class TranApi implements TranApiAdapter {
 
         log.info("CODEF 거래내역 조회 시작");
 
-        String url = "https://development.codef.io/v1/kr/bank/p/account/transaction-list";
+        String url = "https://api.codef.io/v1/kr/bank/p/account/transaction-list";
 
         ResponseEntity<String> response = restClient
                 .post()
