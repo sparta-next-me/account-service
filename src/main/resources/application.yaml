@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: account-service
+  main:
+    allow-bean-definition-overriding: true
 
   datasource:
     url: ${DB_URL}

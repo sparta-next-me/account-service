@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 //@EnableJpaAuditing(auditorAwareRef = "auditorProvider")
 @EnableJpaAuditing
 @EnableTransactionManagement
-public class JpaConfig {
+public class JpaConfig2 {
 //    @Bean
 //    public AuditorAware<String> auditorProvider(){
 //        return new AuditorAwareImpl();

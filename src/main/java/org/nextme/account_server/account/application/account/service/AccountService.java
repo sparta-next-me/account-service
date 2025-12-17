@@ -9,6 +9,7 @@ import org.nextme.account_server.account.application.bank.exception.BankErrorCod
 import org.nextme.account_server.account.application.bank.exception.BankException;
 import org.nextme.account_server.account.application.tran.exception.TranException;
 import org.nextme.account_server.account.domain.AccountApiAdapter;
+import org.nextme.account_server.account.domain.AccountCreateApiAdapter;
 import org.nextme.account_server.account.domain.AccountDeleteApiAdapter;
 import org.nextme.account_server.account.domain.entity.Account;
 import org.nextme.account_server.account.domain.entity.AccountId;
@@ -17,11 +18,8 @@ import org.nextme.account_server.account.domain.repository.AccountRepository;
 import org.nextme.account_server.account.domain.repository.BankRepository;
 import org.nextme.account_server.account.infrastructure.exception.ApiErrorCode;
 import org.nextme.account_server.account.infrastructure.exception.ApiException;
-import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountDeleteRequest;
-import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountRequest;
+import org.nextme.account_server.account.infrastructure.presentation.dto.request.*;
 
-import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountSelectAllRequest;
-import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountSelectRequest;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountResponse;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountSelectResponse;
 import org.springframework.stereotype.Service;
@@ -39,24 +37,35 @@ public class AccountService {
     private final BankRepository bankRepository;
     private final AccountApiAdapter apiAdapter;
     private final AccountDeleteApiAdapter  apiDeleteAdapter;
+    private final AccountCreateApiAdapter accountCreateApiAdapter;
 
     
     // 계좌 연동
-    public AccountResponse create(AccountRequest account) {
-        log.info("서비스 쪽 요청 값", account);
+    public AccountResponse create(AccountRequest account,UUID userId) {
+
+
+        System.out.println( account.toString() + " 서비스 정보");
         // 필수 요청값을 입력하지 않았을 때
         if(account.connectedId() == null || account.connectedId().isEmpty()){
             throw new ApiException(ApiErrorCode.API_MISSING_PARAMETER);
         }
 
-        log.info("여기 옴");
+
+
         String account_Number = apiAdapter.getAccount(account);
-        log.info("외부 요청 넘김");
-        //커넥티드아이디와 계좌번호가 이미 있는지 확인
-        Account existing = accountRepository.findByClientIdAndBankAccount(account.connectedId(), account_Number);
+
 
         // 계좌번호 마스킹 처리
         String account_masked = account_Number.substring(0,3)+"****"+ account_Number.substring(7);
+
+        Account existing = accountRepository.findByClientIdAndBankAccount(account.connectedId(), account_masked);
+
+        //커넥티드아이디와 계좌번호가 이미 있는지 확인
+
+        if(existing != null){
+            throw new AccountException(AccountErrorCode.DUPLICATE_ACCOUNT);
+        }
+
 
 
         // 사용자가 입력한 은행코드 있는지 확인
@@ -79,7 +88,7 @@ public class AccountService {
                 .userName(account.userName())
                 .clientId(account.connectedId())
                 .bankAccount(account_masked)
-                .userId(UUID.randomUUID())
+                .userId(userId)
                 .build();
         accountRepository.save(existing);
 
@@ -146,6 +155,21 @@ public class AccountService {
             log.error("외부 API 삭제 실패 - accountId: {}", accountDeleteRequest.accountId(), e);
             throw e;
         }
+
+    }
+
+    public AccountResponse createConnectedId(AccountCreateRequest account, UUID userId) {
+        String connectedId = accountCreateApiAdapter.getConnectedId(account);
+        String name = "테스트";
+        AccountRequest request = new AccountRequest(
+                account.organization(),
+                connectedId,
+                name
+        );
+        // 계정 연동 메소드 호출
+        AccountResponse accountResponse = create(request,userId);
+
+        return accountResponse;
 
     }
 }
