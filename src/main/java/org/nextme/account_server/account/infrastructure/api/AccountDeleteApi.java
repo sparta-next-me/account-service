@@ -36,7 +36,7 @@ public class AccountDeleteApi implements AccountDeleteApiAdapter {
 
     @Override
     public List<AccountDeleteResponse> deleteAccount(AccountDeleteRequest request) {
-        String url ="https://api.codef.io/v1/account/delete";
+        String url ="https://development.codef.io/v1/account/delete";
         try {
                 ResponseEntity<String> response = RestClient.create()
                     .post()

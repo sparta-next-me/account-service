@@ -33,7 +33,7 @@ public class AccountApi implements AccountApiAdapter {
     @Override
     public String getAccount(AccountRequest request) {
 
-        String url = "https://api.codef.io/v1/kr/bank/p/account/account-list";
+        String url = "https://development.codef.io/v1/kr/bank/p/account/account-list";
 
         try{
             // 계졍 연동 api 호출
