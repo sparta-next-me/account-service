@@ -57,11 +57,14 @@ public class TranService {
         }
 
         log.info("AccountId.of(request.accountId())={}", AccountId.of(request.accountId()));
+
         log.info("userid={}", userId);
         log.info("request.connectedId()={}", request.connectedId());
 
         // 계좌 상태 확인
-        Account account_status = accountRepository.findByIdAndUserIdAndClientIdAndIsDeletedFalse(AccountId.of(request.accountId()),userId,request.connectedId());
+        Account account_status = accountRepository.findByIdAndUserIdAndClientIdAndIsDeletedFalse(
+                AccountId.of(request.accountId()).getId(),
+                userId,request.connectedId());
 
         log.info("account_status={}", account_status.toString());
 
