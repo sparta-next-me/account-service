@@ -2,6 +2,7 @@ package org.nextme.account_server.account.application.tran.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.nextme.account_server.account.application.account.exception.AccountErrorCode;
 import org.nextme.account_server.account.application.account.exception.AccountException;
 import org.nextme.account_server.account.application.bank.exception.BankErrorCode;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class TranService {
     private final TranApiAdapter tranApiAdapter;
     private final TranRepository tranRepository;
@@ -57,8 +59,11 @@ public class TranService {
         // 계좌 상태 확인
         Account account_status = accountRepository.findByAccountIdAndUserIdAndClientIdAndIsDeletedFalse(AccountId.of(request.accountId()),userId,request.connectedId());
 
+        log.info("account_status={}", account_status.toString());
+
+
         // 사용자의 계정이 삭제된 계정이라면
-        if(account_status == null) {
+        if(account_status != null) {
             throw new AccountException(AccountErrorCode.ACCOUNT_ID_NOT_FOUND);
         }
 
@@ -67,7 +72,11 @@ public class TranService {
             throw new TranException(TranErrorCode.NOT_FOUND_USER_ID);
         }
 
+        log.info("account_status.getUserId={}", account_status.getUserId());
+
         List<TranResponse> result_tran = tranApiAdapter.getTranList(request);
+
+        log.info("result_tran={}", result_tran.toString());
 
         // 거래 내역이 없다면
         if(result_tran == null || result_tran.isEmpty()) {
