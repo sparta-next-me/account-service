@@ -44,7 +44,6 @@ public class AccountService {
     public AccountResponse create(AccountRequest account,UUID userId) {
 
 
-        System.out.println( account.toString() + " 서비스 정보");
         // 필수 요청값을 입력하지 않았을 때
         if(account.connectedId() == null || account.connectedId().isEmpty()){
             throw new ApiException(ApiErrorCode.API_MISSING_PARAMETER);
@@ -97,13 +96,13 @@ public class AccountService {
     }
 
     // 계좌 전체 조회
-    public List<AccountSelectResponse> getAll(AccountSelectAllRequest accountSelectAllRequest) {
-        List<Account> accounts = accountRepository.findByUserId(accountSelectAllRequest.userId());
+    public List<AccountSelectResponse> getAll(UUID userId) {
+        List<Account> accounts = accountRepository.findByUserId(userId);
         return accounts.stream().map(AccountSelectResponse::of).collect(Collectors.toList());
     }
 
     // 계좌 단건 조회
-    public AccountSelectResponse getCondition(AccountSelectRequest accountSelectRequest) {
+    public AccountSelectResponse getCondition(AccountSelectRequest accountSelectRequest, UUID userId) {
 
         // 조건 요청값에 대한 조회
         Account account = accountRepository.findByIdOrBankAccount(
@@ -122,7 +121,7 @@ public class AccountService {
     }
 
     //계정삭제
-    public void delete(AccountDeleteRequest accountDeleteRequest) {
+    public void delete(AccountDeleteRequest accountDeleteRequest, UUID userId) {
         Account account = accountRepository.findById(AccountId.of(accountDeleteRequest.accountId()));
         // 삭제할 게좌 아이디나 유저 아이디가 없다면
         if(account == null || account.getUserId() == null) {
@@ -130,7 +129,7 @@ public class AccountService {
         }
 
         // 요청 값이 일치하지 않을 떄(유저아이디, 계좌아이디, 커넥티드아이디)
-        if(!account.getUserId().equals(accountDeleteRequest.userId()) || !account.getId().getId().equals(accountDeleteRequest.accountId()) || !account.getClientId().equals(accountDeleteRequest.connectedId())) {
+        if(!account.getUserId().equals(String.valueOf(userId))&& !account.getId().getId().equals(accountDeleteRequest.accountId()) && !account.getClientId().equals(accountDeleteRequest.connectedId())) {
             throw new AccountException(AccountErrorCode.ACCOUNT_VALUE_ERROR);
         }
 
@@ -158,9 +157,10 @@ public class AccountService {
 
     }
 
-    public AccountResponse createConnectedId(AccountCreateRequest account, UUID userId) {
+
+    public AccountResponse createConnectedId(AccountCreateRequest account, UUID userId,String userName) {
         String connectedId = accountCreateApiAdapter.getConnectedId(account);
-        String name = "테스트";
+        String name = userName;
         AccountRequest request = new AccountRequest(
                 account.organization(),
                 connectedId,
