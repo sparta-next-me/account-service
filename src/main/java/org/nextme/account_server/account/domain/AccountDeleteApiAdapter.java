@@ -5,6 +5,7 @@ import org.nextme.account_server.account.infrastructure.presentation.dto.request
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountDeleteResponse;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface AccountDeleteApiAdapter {
 

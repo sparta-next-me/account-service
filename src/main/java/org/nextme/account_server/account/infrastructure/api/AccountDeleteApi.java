@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 
 @Component
@@ -60,7 +61,8 @@ public class AccountDeleteApi implements AccountDeleteApiAdapter {
         // 위와 같은 형태로 담기 위한 처리
         Map<String, Object> body = Map.of(
                 "accountList", List.of(codefDeleteAccountRequest),
-                "connectedId", request.connectedId(),
+                "userId", request.userId(),
+                "connectedId" , request.connectedId(),
                 "accountId", request.accountId()
         );
 
@@ -74,13 +76,13 @@ public class AccountDeleteApi implements AccountDeleteApiAdapter {
                     .retrieve()
                     .toEntity(String.class);
 
+
                 // 반환 상태가 2xx라면
                 if (!response.getStatusCode().is2xxSuccessful()) {
                     return new ArrayList<>();
                 }
                 String result = URLDecoder.decode(response.getBody(), StandardCharsets.UTF_8);
                 JsonNode accountNode = objectMapper.readTree(result);
-
 
                 // 결과코드 추출 (null 체크 포함)
                 JsonNode resultNode = accountNode.path("result");

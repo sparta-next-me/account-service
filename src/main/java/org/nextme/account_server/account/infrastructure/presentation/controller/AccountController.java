@@ -51,10 +51,14 @@ public class AccountController {
     }
 
     //계좌 삭제
-    @PreAuthorize("hasRole('USER') or hasRole('ADVISOR')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADVISOR')")
     @DeleteMapping
-    public ResponseEntity<CustomResponse> deleteAccount(@RequestBody AccountDeleteRequest accountDeleteRequest,@AuthenticationPrincipal UserPrincipal principal) {
-        accountService.delete(accountDeleteRequest,UUID.fromString(principal.userId()));
-        return ResponseEntity.ok(CustomResponse.onSuccess("계좌 삭제 되었습니다."));
-    }
-}
+    public ResponseEntity<CustomResponse> deleteAccount(@RequestBody AccountDeleteRequest accountDeleteRequest) {
+//            ,@AuthenticationPrincipal UserPrincipal principal)
+        {
+            accountService.delete(accountDeleteRequest
+//                    ,UUID.fromString(principal.userId())
+            );
+            return ResponseEntity.ok(CustomResponse.onSuccess("계좌 삭제 되었습니다."));
+        }
+    }}
