@@ -41,13 +41,15 @@ public class TranController {
         return ResponseEntity.ok(CustomResponse.onSuccess("거래내역 전체 조회 되었습니다.",tranResponse));
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADVISOR')")
     @PostMapping("/condition")
     // 거래내역 단건 조회
-    public ResponseEntity<CustomResponse<TranResponse>> getCondition(@RequestBody TranSelectRequest tranSelectRequest) {
-        TranResponse tranResponse = tranService.getCondition(tranSelectRequest);
+    public ResponseEntity<CustomResponse<TranResponse>> getCondition(@RequestBody TranSelectRequest tranSelectRequest,@AuthenticationPrincipal UserPrincipal principal) {
+        TranResponse tranResponse = tranService.getCondition(tranSelectRequest,UUID.fromString(principal.userId()));
         return ResponseEntity.ok(CustomResponse.onSuccess("거래내역 단건 조회 되었습니다.",tranResponse));
 
     }
+
 
     @GetMapping("/tranList/{userId}")
     // 미래설계에서 백터화 시키키 위한 거래내역 정보

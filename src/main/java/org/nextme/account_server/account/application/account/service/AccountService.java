@@ -105,8 +105,8 @@ public class AccountService {
     public AccountSelectResponse getCondition(AccountSelectRequest accountSelectRequest, UUID userId) {
 
         // 조건 요청값에 대한 조회
-        Account account = accountRepository.findByIdOrBankAccount(
-                AccountId.of(accountSelectRequest.accountId()),
+        Account account = accountRepository.findByIdAndUserIdOrBankAccount(
+                AccountId.of(accountSelectRequest.accountId()),userId,
                 accountSelectRequest.connectdId());
 
 
