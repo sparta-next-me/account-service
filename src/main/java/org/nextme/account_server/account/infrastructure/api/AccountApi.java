@@ -40,13 +40,14 @@ public class AccountApi implements AccountApiAdapter {
             ResponseEntity<String> response = RestClient.create()
                     .post()
                     .uri(url)
-                    .header("Authorization",   accessToken)
+                    .header("Authorization",   "Bearer " +accessToken.trim())
                     .body(request)
                     .retrieve()
                     .toEntity(String.class);
 
             // 호출하여 상태값 확인
             HttpStatusCode status = response.getStatusCode();
+
 
             // 상태값이 2xx일 때만
             if (status.is2xxSuccessful()) {

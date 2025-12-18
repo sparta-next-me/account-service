@@ -9,6 +9,7 @@ import org.nextme.account_server.account.application.bank.exception.BankErrorCod
 import org.nextme.account_server.account.application.bank.exception.BankException;
 import org.nextme.account_server.account.application.tran.exception.TranException;
 import org.nextme.account_server.account.domain.AccountApiAdapter;
+import org.nextme.account_server.account.domain.AccountCreateApiAdapter;
 import org.nextme.account_server.account.domain.AccountDeleteApiAdapter;
 import org.nextme.account_server.account.domain.entity.Account;
 import org.nextme.account_server.account.domain.entity.AccountId;
@@ -17,11 +18,8 @@ import org.nextme.account_server.account.domain.repository.AccountRepository;
 import org.nextme.account_server.account.domain.repository.BankRepository;
 import org.nextme.account_server.account.infrastructure.exception.ApiErrorCode;
 import org.nextme.account_server.account.infrastructure.exception.ApiException;
-import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountDeleteRequest;
-import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountRequest;
+import org.nextme.account_server.account.infrastructure.presentation.dto.request.*;
 
-import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountSelectAllRequest;
-import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountSelectRequest;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountResponse;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountSelectResponse;
 import org.springframework.stereotype.Service;
@@ -39,22 +37,34 @@ public class AccountService {
     private final BankRepository bankRepository;
     private final AccountApiAdapter apiAdapter;
     private final AccountDeleteApiAdapter  apiDeleteAdapter;
+    private final AccountCreateApiAdapter accountCreateApiAdapter;
 
-    
+
     // 계좌 연동
-    public AccountResponse create(AccountRequest account) {
+    public AccountResponse create(AccountRequest account,UUID userId) {
+
+
         // 필수 요청값을 입력하지 않았을 때
         if(account.connectedId() == null || account.connectedId().isEmpty()){
             throw new ApiException(ApiErrorCode.API_MISSING_PARAMETER);
         }
 
+
+
         String account_Number = apiAdapter.getAccount(account);
 
-        //커넥티드아이디와 계좌번호가 이미 있는지 확인
-        Account existing = accountRepository.findByClientIdAndBankAccount(account.connectedId(), account_Number);
 
         // 계좌번호 마스킹 처리
         String account_masked = account_Number.substring(0,3)+"****"+ account_Number.substring(7);
+
+        Account existing = accountRepository.findByClientIdAndBankAccount(account.connectedId(), account_masked);
+
+        //커넥티드아이디와 계좌번호가 이미 있는지 확인
+
+        if(existing != null){
+            throw new AccountException(AccountErrorCode.DUPLICATE_ACCOUNT);
+        }
+
 
 
         // 사용자가 입력한 은행코드 있는지 확인
@@ -77,7 +87,7 @@ public class AccountService {
                 .userName(account.userName())
                 .clientId(account.connectedId())
                 .bankAccount(account_masked)
-                .userId(UUID.randomUUID())
+                .userId(userId)
                 .build();
         accountRepository.save(existing);
 
@@ -86,13 +96,13 @@ public class AccountService {
     }
 
     // 계좌 전체 조회
-    public List<AccountSelectResponse> getAll(AccountSelectAllRequest accountSelectAllRequest) {
-        List<Account> accounts = accountRepository.findByUserId(accountSelectAllRequest.userId());
+    public List<AccountSelectResponse> getAll(UUID userId) {
+        List<Account> accounts = accountRepository.findByUserId(userId);
         return accounts.stream().map(AccountSelectResponse::of).collect(Collectors.toList());
     }
 
     // 계좌 단건 조회
-    public AccountSelectResponse getCondition(AccountSelectRequest accountSelectRequest) {
+    public AccountSelectResponse getCondition(AccountSelectRequest accountSelectRequest, UUID userId) {
 
         // 조건 요청값에 대한 조회
         Account account = accountRepository.findByIdOrBankAccount(
@@ -111,7 +121,7 @@ public class AccountService {
     }
 
     //계정삭제
-    public void delete(AccountDeleteRequest accountDeleteRequest) {
+    public void delete(AccountDeleteRequest accountDeleteRequest, UUID userId) {
         Account account = accountRepository.findById(AccountId.of(accountDeleteRequest.accountId()));
         // 삭제할 게좌 아이디나 유저 아이디가 없다면
         if(account == null || account.getUserId() == null) {
@@ -119,7 +129,7 @@ public class AccountService {
         }
 
         // 요청 값이 일치하지 않을 떄(유저아이디, 계좌아이디, 커넥티드아이디)
-        if(!account.getUserId().equals(accountDeleteRequest.userId()) || !account.getId().getId().equals(accountDeleteRequest.accountId()) || !account.getClientId().equals(accountDeleteRequest.connectedId())) {
+        if(!account.getUserId().equals(String.valueOf(userId))&& !account.getId().getId().equals(accountDeleteRequest.accountId()) && !account.getClientId().equals(accountDeleteRequest.connectedId())) {
             throw new AccountException(AccountErrorCode.ACCOUNT_VALUE_ERROR);
         }
 
@@ -144,6 +154,22 @@ public class AccountService {
             log.error("외부 API 삭제 실패 - accountId: {}", accountDeleteRequest.accountId(), e);
             throw e;
         }
+
+    }
+
+
+    public AccountResponse createConnectedId(AccountCreateRequest account, UUID userId,String userName) {
+        String connectedId = accountCreateApiAdapter.getConnectedId(account);
+        String name = userName;
+        AccountRequest request = new AccountRequest(
+                account.organization(),
+                connectedId,
+                name
+        );
+        // 계정 연동 메소드 호출
+        AccountResponse accountResponse = create(request,userId);
+
+        return accountResponse;
 
     }
 }
