@@ -57,7 +57,7 @@ public class TranService {
         }
 
         // 계좌 상태 확인
-        Account account_status = accountRepository.findByAccountIdAndUserIdAndClientIdAndIsDeletedFalse(AccountId.of(request.accountId()),userId,request.connectedId());
+        Account account_status = accountRepository.findByIdAndUserIdAndClientIdAndIsDeletedFalse(AccountId.of(request.accountId()),userId,request.connectedId());
 
         log.info("account_status={}", account_status.toString());
 
