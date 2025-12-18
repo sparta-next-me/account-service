@@ -31,7 +31,6 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
 
     Account findByIdAndUserIdAndClientIdAndIsDeletedFalse(AccountId id, UUID userId, String s);
 
-    Account findByAccountIdAndUserIdAndClientIdAndIsDeletedFalse(AccountId id, UUID userId, String account);
 
     Account findByIdAndUserIdOrBankAccount(AccountId of, UUID userId, String s);
 }
