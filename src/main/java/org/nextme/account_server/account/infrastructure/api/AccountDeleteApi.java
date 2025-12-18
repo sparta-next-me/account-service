@@ -61,9 +61,9 @@ public class AccountDeleteApi implements AccountDeleteApiAdapter {
         // 위와 같은 형태로 담기 위한 처리
         Map<String, Object> body = Map.of(
                 "accountList", List.of(codefDeleteAccountRequest),
-                "userId", request.userId(),
-                "connectedId" , request.connectedId(),
-                "accountId", request.accountId()
+                "userId", request.getUserId(),
+                "connectedId" , request.getConnectedId(),
+                "accountId", request.getAccountId()
         );
 
         String url ="https://development.codef.io/v1/account/delete";

@@ -120,17 +120,15 @@ public class AccountService {
     }
 
     //계정삭제
-    public void delete(AccountDeleteRequest accountDeleteRequest) {
-        Account account = accountRepository.findById(AccountId.of(accountDeleteRequest.accountId()));
+    public void delete(AccountDeleteRequest accountDeleteRequest,  UUID userId) {
+        Account account = accountRepository.findById(AccountId.of(accountDeleteRequest.getAccountId()));
         // 삭제할 게좌 아이디나 유저 아이디가 없다면
         if(account == null || account.getUserId() == null) {
             throw new AccountException(AccountErrorCode.ACCOUNT_ID_NOT_FOUND);
         }
 
         // 요청 값이 일치하지 않을 떄(유저아이디, 계좌아이디, 커넥티드아이디)
-        if(
-//                !account.getUserId().equals(String.valueOf(userId)) &&
-                        !account.getId().getId().equals(accountDeleteRequest.accountId()) && !account.getClientId().equals(accountDeleteRequest.connectedId())) {
+        if(!account.getUserId().equals(String.valueOf(userId)) &&!account.getId().getId().equals(accountDeleteRequest.getAccountId()) && !account.getClientId().equals(accountDeleteRequest.getAccountId())) {
             throw new AccountException(AccountErrorCode.ACCOUNT_VALUE_ERROR);
         }
 
@@ -138,25 +136,31 @@ public class AccountService {
                 account.getBank().getBankCode()
         );
 
+        AccountDeleteRequest request = new AccountDeleteRequest(
+                accountDeleteRequest.getConnectedId(),
+                accountDeleteRequest.getAccountId(),
+                userId
+        );
+
         // 분산 트랜잭션 일관성 문제 해결
         // 외부 api호출과 로컬 db가 서로 원자성 보장 x
         // saga패턴 적용하여 구현
         try {
             // 1단계: 외부 API 삭제
-            apiDeleteAdapter.deleteAccount(codefDeleteAccountRequest, accountDeleteRequest);
+            apiDeleteAdapter.deleteAccount(codefDeleteAccountRequest, request);
 
             try {
                 // 2단계: 로컬 삭제
                 accountRepository.delete(account);
-                log.info("계좌 삭제 완료 - accountId: {}", accountDeleteRequest.accountId());
+                log.info("계좌 삭제 완료 - accountId: {}", accountDeleteRequest.getAccountId());
             } catch (Exception e) {
                 // 보상 트랜잭션: 외부 API에 복구 요청 (복구 API가 있다면)
                 log.error("로컬 삭제 실패, 보상 트랜잭션 필요 - accountId: {}",
-                        accountDeleteRequest.accountId(), e);
+                        accountDeleteRequest.getAccountId(), e);
                 throw new AccountException(AccountErrorCode.ACCOUNT_DELETE_FAILED);
             }
         } catch (TranException e) {
-            log.error("외부 API 삭제 실패 - accountId: {}", accountDeleteRequest.accountId(), e);
+            log.error("외부 API 삭제 실패 - accountId: {}", accountDeleteRequest.getAccountId(), e);
             throw e;
         }
 
