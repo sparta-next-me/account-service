@@ -133,12 +133,16 @@ public class AccountService {
             throw new AccountException(AccountErrorCode.ACCOUNT_VALUE_ERROR);
         }
 
+        CodefDeleteAccountRequest codefDeleteAccountRequest = new CodefDeleteAccountRequest(
+                account.getBank().getBankCode()
+        );
+
         // 분산 트랜잭션 일관성 문제 해결
         // 외부 api호출과 로컬 db가 서로 원자성 보장 x
         // saga패턴 적용하여 구현
         try {
             // 1단계: 외부 API 삭제
-            apiDeleteAdapter.deleteAccount(accountDeleteRequest);
+            apiDeleteAdapter.deleteAccount(codefDeleteAccountRequest, accountDeleteRequest);
 
             try {
                 // 2단계: 로컬 삭제

@@ -8,6 +8,7 @@ import org.nextme.account_server.account.application.tran.exception.TranErrorCod
 import org.nextme.account_server.account.application.tran.exception.TranException;
 import org.nextme.account_server.account.domain.AccountDeleteApiAdapter;
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.AccountDeleteRequest;
+import org.nextme.account_server.account.infrastructure.presentation.dto.request.CodefDeleteAccountRequest;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountDeleteResponse;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.TranResponse;
 import org.nextme.account_server.global.infrastructure.exception.ApplicationException;
@@ -21,6 +22,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 @Component
@@ -35,14 +37,40 @@ public class AccountDeleteApi implements AccountDeleteApiAdapter {
     private String accessToken;
 
     @Override
-    public List<AccountDeleteResponse> deleteAccount(AccountDeleteRequest request) {
+    public List<AccountDeleteResponse> deleteAccount(CodefDeleteAccountRequest codefDeleteAccountRequest,AccountDeleteRequest request) {
+
+
+        /*
+        * {
+
+            "accountList":[
+                {
+                    "countryCode": "KR",
+                    "businessType": "BK",
+                    "clientType": "P",
+                    "organization": "0088",
+                    "loginType": "1"
+                }
+            ],
+            "connectedId":"86-x1xqKQzqb-7LwAnGKvU",
+            "accountId" :"a8f94952-e335-417d-979f-b398cc85818d"
+
+
+        * */
+        // 위와 같은 형태로 담기 위한 처리
+        Map<String, Object> body = Map.of(
+                "accountList", List.of(codefDeleteAccountRequest),
+                "connectedId", request.connectedId(),
+                "accountId", request.accountId()
+        );
+
         String url ="https://development.codef.io/v1/account/delete";
         try {
                 ResponseEntity<String> response = RestClient.create()
                     .post()
                     .uri(url)
                     .header("Authorization", "Bearer " + accessToken)
-                    .body(request)
+                    .body(body)
                     .retrieve()
                     .toEntity(String.class);
 
