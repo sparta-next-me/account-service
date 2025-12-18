@@ -41,7 +41,7 @@ public class TranService {
     private final AccountRepository accountRepository;
     private final TranRepositoryCustom tranRepositoryCustom;
 
-    public TranResponse create(TranRequest request) {
+    public TranResponse create(TranRequest request, UUID userId) {
 
         // 필수 입력값을 입력하지 않는다면
         if(request.accountId() == null || request.organization() == null || request.organization().isEmpty()
@@ -103,16 +103,16 @@ public class TranService {
     }
 
     // 거래내역 전체조회
-    public List<TranResponse> getAll(TranSelectAllRequest tranSelectAllRequest) {
+    public List<TranResponse> getAll(UUID userId) {
 
         // 계좌 상태 확인
-        Account account_status = accountRepository.findByUserIdAndIsDeletedFalse(tranSelectAllRequest.userId());
+        Account account_status = accountRepository.findByUserIdAndIsDeletedFalse(userId);
 
         // 사용자의 계정이 삭제된 계정이라면
         if(account_status == null) {
             throw new AccountException(AccountErrorCode.ACCOUNT_ID_NOT_FOUND);
         }
-        List<Tran> tranResponse = tranRepository.findByUserId(tranSelectAllRequest.userId());
+        List<Tran> tranResponse = tranRepository.findByUserId(userId);
         return tranResponse.stream().map(TranResponse::of).collect(Collectors.toList());
     }
 

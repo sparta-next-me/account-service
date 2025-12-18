@@ -9,7 +9,10 @@ import org.nextme.account_server.account.infrastructure.presentation.dto.respons
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.TranFeignResponse;
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.TranResponse;
 import org.nextme.account_server.global.infrastructure.success.CustomResponse;
+import org.nextme.common.security.UserPrincipal;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,17 +24,19 @@ import java.util.UUID;
 public class TranController {
     private final TranService tranService;
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADVISOR')")
     @PostMapping
     // 거래내역 api 호출 후 db 저장
-    public ResponseEntity<CustomResponse<TranResponse>> createAccount(@RequestBody TranRequest request) {
-        TranResponse tranResponse = tranService.create(request);
+    public ResponseEntity<CustomResponse<TranResponse>> createAccount(@RequestBody TranRequest request,@AuthenticationPrincipal UserPrincipal principal) {
+        TranResponse tranResponse = tranService.create(request, UUID.fromString(principal.userId()));
         return ResponseEntity.ok(CustomResponse.onSuccess("거래내역 생성 되었습니다.",tranResponse));
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADVISOR')")
     @PostMapping("/all")
     // 거래내역 전체조회
-    public ResponseEntity<CustomResponse<List<TranResponse>>> getAccount(@RequestBody TranSelectAllRequest tranSelectAllRequest) {
-        List<TranResponse> tranResponse = tranService.getAll(tranSelectAllRequest);
+    public ResponseEntity<CustomResponse<List<TranResponse>>> getAccount(@AuthenticationPrincipal UserPrincipal principal) {
+        List<TranResponse> tranResponse = tranService.getAll(UUID.fromString(principal.userId()));
 
         return ResponseEntity.ok(CustomResponse.onSuccess("거래내역 전체 조회 되었습니다.",tranResponse));
     }
