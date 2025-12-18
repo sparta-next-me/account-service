@@ -56,6 +56,10 @@ public class TranService {
             throw new TranException(TranErrorCode.TRAN_MISSING_PARAMETER);
         }
 
+        log.info("AccountId.of(request.accountId())={}", AccountId.of(request.accountId()));
+        log.info("userid={}", userId);
+        log.info("request.connectedId()={}", request.connectedId());
+
         // 계좌 상태 확인
         Account account_status = accountRepository.findByIdAndUserIdAndClientIdAndIsDeletedFalse(AccountId.of(request.accountId()),userId,request.connectedId());
 
