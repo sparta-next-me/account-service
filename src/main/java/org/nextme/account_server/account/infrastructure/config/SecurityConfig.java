@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .httpBasic(basic -> basic.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/health", "/public/**","/v1/account/bank","/v1/account/financial-products/**").permitAll()
+                        .requestMatchers("/health", "/public/**","/v1/account/bank","/v1/account/financial-products/**", "/v1/account/**").permitAll()
                         .requestMatchers("/actuator/prometheus", "/actuator/health").permitAll().anyRequest().authenticated()
                 )
                 .addFilterBefore(gatewayUserHeaderAuthenticationFilter,

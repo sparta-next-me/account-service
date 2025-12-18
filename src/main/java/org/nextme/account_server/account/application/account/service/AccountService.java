@@ -56,7 +56,7 @@ public class AccountService {
         String account_masked = account_Number.substring(0,3)+"****"+ account_Number.substring(7);
 
         // 이미 연동된 계좌가 있는지 확인
-        Account existing = accountRepository.findByClientIOrBankAccount(account.connectedId(), account_masked);
+        Account existing = accountRepository.findByClientIdOrBankAccount(account.connectedId(), account_masked);
 
         //커넥티드아이디와 계좌번호가 이미 있다면
 
@@ -120,7 +120,7 @@ public class AccountService {
     }
 
     //계정삭제
-    public void delete(AccountDeleteRequest accountDeleteRequest, UUID userId) {
+    public void delete(AccountDeleteRequest accountDeleteRequest) {
         Account account = accountRepository.findById(AccountId.of(accountDeleteRequest.accountId()));
         // 삭제할 게좌 아이디나 유저 아이디가 없다면
         if(account == null || account.getUserId() == null) {
@@ -128,7 +128,9 @@ public class AccountService {
         }
 
         // 요청 값이 일치하지 않을 떄(유저아이디, 계좌아이디, 커넥티드아이디)
-        if(!account.getUserId().equals(String.valueOf(userId))&& !account.getId().getId().equals(accountDeleteRequest.accountId()) && !account.getClientId().equals(accountDeleteRequest.connectedId())) {
+        if(
+//                !account.getUserId().equals(String.valueOf(userId)) &&
+                        !account.getId().getId().equals(accountDeleteRequest.accountId()) && !account.getClientId().equals(accountDeleteRequest.connectedId())) {
             throw new AccountException(AccountErrorCode.ACCOUNT_VALUE_ERROR);
         }
 
