@@ -55,7 +55,7 @@ public class TranService {
         }
 
         // 계좌 상태 확인
-        Account account_status = accountRepository.findByIdAndClientIdAndIsDeletedFalse(AccountId.of(request.accountId()),request.connectedId());
+        Account account_status = accountRepository.findByIdAndUserIdAndClientIdAndIsDeletedFalse(AccountId.of(request.accountId()),userId,request.connectedId());
 
         // 사용자의 계정이 삭제된 계정이라면
         if(account_status == null) {
@@ -117,10 +117,10 @@ public class TranService {
     }
 
     // 거래내역 단건조회
-    public TranResponse getCondition(TranSelectRequest tranSelectRequest) {
+    public TranResponse getCondition(TranSelectRequest tranSelectRequest, UUID userId) {
 
         // 필수 파라미터를 입력하지 않았다면
-        if (tranSelectRequest.userId() == null) {
+        if (userId == null) {
             throw new TranException(TranErrorCode.TRAN_MISSING_PARAMETER);
         }
 
@@ -130,7 +130,7 @@ public class TranService {
         }
 
         // 계좌 상태 확인
-        Account account_status = accountRepository.findByUserIdAndIsDeletedFalse(tranSelectRequest.userId());
+        Account account_status = accountRepository.findByUserIdAndIsDeletedFalse(userId);
 
         // 사용자의 계정이 삭제된 계정이라면
         if(account_status == null) {
@@ -139,7 +139,7 @@ public class TranService {
 
 
         // 조건 요청값에 대한 조회
-        Tran existing = tranRepositoryCustom.tranSelectRequest(tranSelectRequest.userId(),tranSelectRequest.tranDate(), tranSelectRequest.tranTime(), tranSelectRequest.deposit(),tranSelectRequest.withdraw());
+        Tran existing = tranRepositoryCustom.tranSelectRequest(userId,tranSelectRequest.tranDate(), tranSelectRequest.tranTime(), tranSelectRequest.deposit(),tranSelectRequest.withdraw());
 
 
         // 조회된 게 없다면
