@@ -42,7 +42,6 @@ public class AccountCreateApi implements AccountCreateApiAdapter {
     @Override
     public String getConnectedId(AccountCreateRequest request) {
 
-        System.out.println(request.id() + " 아이디");
         CodefAccountRequest requestDto =new CodefAccountRequest(
                 request.id(),
                 request.organization(),
@@ -51,7 +50,6 @@ public class AccountCreateApi implements AccountCreateApiAdapter {
 
         Map<String, Object> body = Map.of("accountList", List.of(requestDto));
 
-        System.out.println(requestDto.toString() + " 테스");
 
         String url = "https://development.codef.io/v1/account/create";
 
