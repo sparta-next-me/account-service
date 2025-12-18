@@ -49,17 +49,16 @@ public class AccountService {
             throw new ApiException(ApiErrorCode.API_MISSING_PARAMETER);
         }
 
-
-
         String account_Number = apiAdapter.getAccount(account);
 
 
         // 계좌번호 마스킹 처리
         String account_masked = account_Number.substring(0,3)+"****"+ account_Number.substring(7);
 
-        Account existing = accountRepository.findByClientIdAndBankAccount(account.connectedId(), account_masked);
+        // 이미 연동된 계좌가 있는지 확인
+        Account existing = accountRepository.findByClientIOrBankAccount(account.connectedId(), account_masked);
 
-        //커넥티드아이디와 계좌번호가 이미 있는지 확인
+        //커넥티드아이디와 계좌번호가 이미 있다면
 
         if(existing != null){
             throw new AccountException(AccountErrorCode.DUPLICATE_ACCOUNT);
