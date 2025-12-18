@@ -26,7 +26,7 @@ public class AccountController {
 
     // 커넥티드 아이디 생성
     @PreAuthorize("hasRole('USER') or hasRole('ADVISOR')")
-    @PostMapping("test")
+    @PostMapping("/create")
     public ResponseEntity<CustomResponse<AccountResponse>> createAccount(@RequestBody AccountCreateRequest account, @AuthenticationPrincipal UserPrincipal principal) {
 
         AccountResponse accountResponse = accountService.createConnectedId(account, UUID.fromString(principal.userId()), principal.getName());
