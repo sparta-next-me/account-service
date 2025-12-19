@@ -16,6 +16,7 @@ import org.nextme.account_server.account.domain.entity.AccountId;
 import org.nextme.account_server.account.domain.entity.Bank;
 import org.nextme.account_server.account.domain.repository.AccountRepository;
 import org.nextme.account_server.account.domain.repository.BankRepository;
+import org.nextme.account_server.account.domain.repository.TranRepository;
 import org.nextme.account_server.account.infrastructure.exception.ApiErrorCode;
 import org.nextme.account_server.account.infrastructure.exception.ApiException;
 import org.nextme.account_server.account.infrastructure.presentation.dto.request.*;
@@ -38,6 +39,7 @@ public class AccountService {
     private final AccountApiAdapter apiAdapter;
     private final AccountDeleteApiAdapter  apiDeleteAdapter;
     private final AccountCreateApiAdapter accountCreateApiAdapter;
+    private final TranRepository tranRepository;
 
 
     // 계좌 연동
@@ -151,6 +153,9 @@ public class AccountService {
 
             try {
                 // 2단계: 로컬 삭제
+                // cascade 거래내역 있으면 거래내역 먼저 삭제
+                tranRepository.deleteByUserId(userId);
+                // 이후 계정 삭제
                 accountRepository.delete(account);
                 log.info("계좌 삭제 완료 - accountId: {}", accountDeleteRequest.getAccountId());
             } catch (Exception e) {

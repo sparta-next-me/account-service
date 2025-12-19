@@ -18,4 +18,5 @@ public interface TranRepository extends JpaRepository<Tran, UUID> {
 
     Tran findFirstByUserId(UUID uuid);
 
+    void deleteByUserId(UUID userId);
 }
