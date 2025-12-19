@@ -19,7 +19,6 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE accountservice.p_user_account SET is_deleted = true WHERE id = ?")
 public class Account extends BaseEntity {
 
     @EmbeddedId
