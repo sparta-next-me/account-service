@@ -71,7 +71,6 @@ public class AccountCreateApi implements AccountCreateApiAdapter {
 
             //Json 파싱하기 위해 디코딩 된 응답값 가져옴
             JsonNode root = objectMapper.readTree(conn);
-            System.out.println(root + " 정보");
 
             // 정보가 있는 객체 접근
             JsonNode connectedIdNode = root.path("data").path("connectedId");

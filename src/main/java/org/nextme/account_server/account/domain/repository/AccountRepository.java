@@ -10,28 +10,15 @@ import java.util.UUID;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, UUID> {
-    Account findByBankAccount(String accountNumber);
-
-    Account findByClientIdAndBankAccount(String clientId, String accountNumber);
-
-
-    Account findByIdOrBankAccount(AccountId id, String bankAccount);
-
-    List<Account> findByClientId(String clientId);
 
     List<Account>findByUserId(UUID userId);
 
     Account findById(AccountId of);
 
 
-    Account findByUserIdAndIsDeletedFalse(UUID userId);
-
-    Account findByIdAndIsDeletedFalse(AccountId of);
-
-
     Account findByIdAndUserIdOrBankAccount(AccountId of, UUID userId, String s);
 
-    Account findByIdAndUserIdAndClientIdAndIsDeletedFalse(AccountId of, UUID userId, String s);
-
     Account findByClientIdOrBankAccount(String s, String accountMasked);
+
+    Account findByIdAndUserIdAndClientId(AccountId of, UUID userId, String s);
 }
