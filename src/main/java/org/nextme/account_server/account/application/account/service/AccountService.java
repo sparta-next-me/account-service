@@ -25,6 +25,7 @@ import org.nextme.account_server.account.infrastructure.presentation.dto.respons
 import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountSelectResponse;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -40,6 +41,7 @@ public class AccountService {
     private final AccountDeleteApiAdapter  apiDeleteAdapter;
     private final AccountCreateApiAdapter accountCreateApiAdapter;
     private final TranRepository tranRepository;
+    private final AccountDeleteApiAdapter accountDeleteApiAdapter;
 
 
     // 계좌 연동
@@ -61,8 +63,19 @@ public class AccountService {
         Account existing = accountRepository.findByClientIdOrBankAccount(account.connectedId(), account_masked);
 
         //커넥티드아이디와 계좌번호가 이미 있다면
-
         if(existing != null){
+
+            AccountDeleteRequest accountDeleteRequest = new AccountDeleteRequest(
+                    account.connectedId(),
+                    UUID.randomUUID(),
+                    userId
+
+            );
+
+            CodefDeleteAccountRequest codefDeleteAccountRequest = new CodefDeleteAccountRequest(
+                    account.organization()
+            );
+            accountDeleteApiAdapter.deleteAccount(codefDeleteAccountRequest,accountDeleteRequest);
             throw new AccountException(AccountErrorCode.DUPLICATE_ACCOUNT);
         }
 
@@ -70,9 +83,6 @@ public class AccountService {
 
         // 사용자가 입력한 은행코드 있는지 확인
         Bank bankEntity = bankRepository.findByBankCode(account.organization());
-
-
-
 
         //이미 커넥티드아이디와 계좌가 존재한다면
         if(existing != null) {
@@ -124,7 +134,7 @@ public class AccountService {
     //계정삭제
     public void delete(AccountDeleteRequest accountDeleteRequest,  UUID userId) {
         Account account = accountRepository.findById(AccountId.of(accountDeleteRequest.getAccountId()));
-        // 삭제할 게좌 아이디나 유저 아이디가 없다면
+        // 삭제할 계좌 아이디나 유저 아이디가 없다면
         if(account == null || account.getUserId() == null) {
             throw new AccountException(AccountErrorCode.ACCOUNT_ID_NOT_FOUND);
         }
@@ -132,6 +142,12 @@ public class AccountService {
         // 요청 값이 일치하지 않을 떄(유저아이디, 계좌아이디, 커넥티드아이디)
         if(!account.getUserId().equals(String.valueOf(userId)) &&!account.getId().getId().equals(accountDeleteRequest.getAccountId()) && !account.getClientId().equals(accountDeleteRequest.getAccountId())) {
             throw new AccountException(AccountErrorCode.ACCOUNT_VALUE_ERROR);
+        }
+
+        // 이미 삭제된 계좌라면
+        if(account.isDeleted()){
+            log.info("이미 삭제된 계정입니다.");
+            throw new AccountException(AccountErrorCode.ACCOUNT_ALREADY_DELETE);
         }
 
         CodefDeleteAccountRequest codefDeleteAccountRequest = new CodefDeleteAccountRequest(
@@ -173,6 +189,7 @@ public class AccountService {
 
 
     public AccountResponse createConnectedId(AccountCreateRequest account, UUID userId,String userName) {
+
         String connectedId = accountCreateApiAdapter.getConnectedId(account);
         String name = userName;
         AccountRequest request = new AccountRequest(
@@ -184,6 +201,7 @@ public class AccountService {
         AccountResponse accountResponse = create(request,userId);
 
         return accountResponse;
+
 
     }
 }

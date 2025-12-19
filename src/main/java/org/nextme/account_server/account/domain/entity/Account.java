@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
+import org.nextme.account_server.account.infrastructure.presentation.dto.response.AccountResponse;
 import org.nextme.account_server.global.common.jpa.BaseEntity;
 
 import java.util.UUID;
@@ -56,12 +57,5 @@ public class Account extends BaseEntity {
     @Column(nullable = false, name = "user_id")
     // 유저식별ID
     private UUID userId;
-
-    @ColumnDefault("false")
-    @Column(nullable = false,name = "is_deleted")
-    // 계좌상태
-    private boolean isDeleted;
-
-
 
 }
