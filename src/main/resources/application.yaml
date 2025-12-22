@@ -43,15 +43,10 @@ spring:
 
 eureka:
   instance:
-    prefer-ip-address: false
-    hostname: localhost
+    prefer-ip-address: true
   client:
-    register-with-eureka: true
-    fetch-registry: true
     service-url:
-      defaultZone: ${DEFAULT_ZONE}
-
-
+      defaultZone: http://eureka-server.next-me.svc.cluster.local:3151/eureka/
 
 # OPEN DOC API 설정
 springdoc:
