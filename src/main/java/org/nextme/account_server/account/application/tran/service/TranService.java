@@ -122,12 +122,12 @@ public class TranService {
     public List<TranResponse> getAll(UUID userId) {
 
         // 계좌 상태 확인
-        Account account_id = (Account) accountRepository.findByUserId(userId);
-
-        // 사용자의 계정이 삭제된 계정이라면
-        if(account_id == null) {
-            throw new AccountException(AccountErrorCode.ACCOUNT_ID_NOT_FOUND);
-        }
+//        Account account_id = (Account) accountRepository.findByUserId(userId);
+//
+//        // 사용자의 계정이 삭제된 계정이라면
+//        if(account_id == null) {
+//            throw new AccountException(AccountErrorCode.ACCOUNT_ID_NOT_FOUND);
+//        }
         List<Tran> tranResponse = tranRepository.findByUserId(userId);
         return tranResponse.stream().map(TranResponse::of).collect(Collectors.toList());
     }
