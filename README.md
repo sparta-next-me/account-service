@@ -1,9 +1,9 @@
-# Financial Data Integration API (Backend)
+# 자산, 금융상품 관리 API (Backend)
 > **사용자가 여러 은행의 자산을 한곳에서 관리하고, 개인화된 금융 상품 추천(RAG)을 받을 수 있도록 돕는 서비스입니다. <br>
 > **전체 서비스 중 계좌 연동, 소비 데이터 수집, 금융 상품 RAG 파이프라인 구축 담당** > 외부 금융 API(CODEF, 금감원)를 활용하여 흩어진 자산 데이터를 통합하고, 분석 가능한 데이터로 가공하는 핵심 엔진을 개발했습니다.
 
 
-## 🛠 Tech Stack
+## 기술 스택
 - **Language**: Java 21 / Spring Boot 3.x
 - **Database**: Postgre / JPA (Hibernate)
 - **Communication**: Spring Cloud OpenFeign
@@ -14,29 +14,27 @@
 
 ---
 
-## Key Implementation (담당 기능)
+## 담당 기능
 
-### 1. 계좌 및 자산 통합 (Account Management)
+### 1. 계좌 및 자산 통합 
 * **다중 기관 연동**: CODEF API를 통해 시중 3대 은행(신한, 국민, 기업)의 계좌 연동, 조회, 해지 로직 구현
 * **자산 데이터 가공**: 백엔드에서 연동된 모든 계좌의 잔액을 합산하여 **'총 자산금'**을 산출하는 비즈니스 로직 개발
 * **API 추상화**: 향후 은행 추가 시 유연하게 대응할 수 있도록 외부 API 호출부와 비즈니스 로직 분리
 
-### 2. 소비 내역 분석 (Transaction Tracking)
-* **지출 리포트 기반 데이터**: 실시간 거래 내역 생성 및 조회 API 구현
-* **고도화 설계**: 대량의 거래 데이터를 효율적으로 관리하기 위해 **Daily Scheduling(Spring Batch)** 도입을 고려한 DB 스키마 설계
+### 2. 소비 내역 분석
+* **On-Demand 수집**: On-Demand 수집: 사용자가 요청한 특정 날짜 범위의 거래 내역을 실시간으로 가져와 DB에 동기화
 
 ### 3. 금융 상품 파이프라인 (Product )
 * **금감원 데이터 수집**: 예/적금 정보를 동기화하여 서비스 내 추천 데이터셋 구축
-* **RAG 서버 데이터 공급**: LLM 기반 유사도 분석 서버가 데이터를 원활히 참조할 수 있도록 **OpenFeign**을 활용한 전용 API 및 전송 파이프라인 구축
+* **OpenFeign 인터페이스**: LLM 기반 유사도 분석 서버가 데이터를 원활히 참조할 수 있도록 **OpenFeign**을 활용한 전용 API 및 전송 파이프라인 구축
 
 ---
 
-## 🏗 System Architecture
-
-
+# ERD
+## <img width="828" height="538" alt="스크린샷 2025-12-24 오후 3 43 01" src="https://github.com/user-attachments/assets/aa7e1b40-631d-4041-afad-5e4961f48319" />
 ---
+# 폴더구조
 
-## 📂 Project Structure (My Module)
 ```text
 src/main/java/com/project/finance/
 ├── account        # 계좌 연동 로직 (Connect/Delete/Sync)
@@ -46,32 +44,34 @@ src/main/java/com/project/finance/
 └── common         # 공통 예외 처리 및 유틸리티
 ```
 
-Database ERD (Major Entities)
-Account: 거래 내역과의 1:N 관계를 통해 확장성 확보
+# Technical Decision & Trouble Shooting
+### [Technical Decision]
+#### RestClient & OpenFeign
+1. OpenFeign (RAG 서버 통신)
 
-Transaction: 일일 스케줄링 및 인덱싱을 고려한 설계
+ - 비즈니스 로직과 통신 로직을 분리하여 가독성을 높임
 
-Product: RAG 분석을 위한 메타데이터 필드 포함
+ - 유지보수성: 내부 통신 시, 인터페이스만으로 호출이 가능해 코드의 응집도를 향상시킴
 
-💡 Technical Decision & Trouble Shooting
-✅ 왜 OpenFeign을 사용했는가?
-단순 RestTemplate보다 선언적인(Interface-based) 코드를 작성할 수 있어 외부 API 명세가 바뀌더라도 비즈니스 로직의 수정을 최소화할 수 있다고 판단했습니다. 특히 RAG 서버와의 통신 시 가독성과 유지보수성을 크게 향상시켰습니다.
+2. RestClient (외부 금융 API 연동)
 
-✅ 데이터 정규화 문제 (External API Integration)
-문제: CODEF API 응답 데이터가 은행마다 필드명이나 날짜 포맷이 미세하게 다른 이슈 발생
+ - CODEF 및 금감원 API와 같이 기관별로 상이한 에러 응답 처리와 동적인 헤더 설정이 필요한 경우, 직접적인 제어가 가능한 RestClient를 채택
+#### 고도화 계획
+현재 혼용 중인 통신 방식을 향후 Spring Cloud OpenFeign으로 통일할 에정
 
-해결: DataMapper 클래스를 별도로 두어 각 은행별 응답을 서비스 내부의 공통 TransactionVO로 변환하는 전략 패턴(Strategy Pattern) 구조 적용
+### [Trouble Shooting] 
+#### 기관별 상이한 은행 코드 통합 문제
+**문제** : CODEF API의 은행 코드와 금융감독원 API의 은행 코드가 서로 달라, 특정 은행의 계좌와 해당 은행의 금융 상품을 매칭하기 어려움 발생
 
-✅ 향후 고도화 계획 (Scalability)
-Spring Batch: 현재 실시간 호출 방식에서 매일 새벽 트래픽이 적은 시간에 데이터를 동기화하는 배치 프로세스로 고도화 예정
+**해결**: 내부적으로 Bank_Code 매핑 테이블을 구축. 각 기관의 코드를 서비스 표준 코드로 변환하는 로직을 구현하여, 사용자가 연동한 은행의 상품을 정확히 식별할 수 있도록 데이터 정규화 수행
+ 
 
-Query Optimization: 거래 내역이 누적됨에 따라 userId와 transactionDate에 복합 인덱스를 적용하여 조회 성능 최적화 예정
-
-🔗 Main API Endpoints
+## API Endpoints
+```text
 Category	Method	Endpoint	Description
 Account	POST	/api/v1/accounts	신규 은행 계좌 연동 (CODEF)
 Account	DELETE	/api/v1/accounts/{id}	계좌 연동 해지
 Transaction	GET	/api/v1/transactions	지출 내역 및 거래 데이터 조회
 Product	POST	/api/v1/products/sync	금감원 상품 정보 최신화
-
+```
 
