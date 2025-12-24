@@ -1,5 +1,5 @@
 # 자산, 금융상품 관리 API (Backend)
-> **사용자가 여러 은행의 자산을 한곳에서 관리하고, 개인화된 금융 상품 추천(RAG)을 받을 수 있도록 돕는 서비스입니다. <br>
+> 사용자가 여러 은행의 자산을 한곳에서 관리하고, 개인화된 금융 상품 추천(RAG)을 받을 수 있도록 돕는 서비스입니다. <br>
 > **전체 서비스 중 계좌 연동, 소비 데이터 수집, 금융 상품 RAG 파이프라인 구축 담당** > 외부 금융 API(CODEF, 금감원)를 활용하여 흩어진 자산 데이터를 통합하고, 분석 가능한 데이터로 가공하는 핵심 엔진을 개발했습니다.
 
 
@@ -68,18 +68,18 @@ src/main/java/com/project/finance/
 
 ## API Endpoints
 ```text
-Category	         Method	Endpoint	                                       Description
-Account	POST	     /v1/account/create	                                     신규 은행 계좌 연동 (CODEF)
+Category           Method Endpoint	                                       Description
+Account	POST       /v1/account/create                                      신규 은행 계좌 연동 (CODEF)
 Account	GET	       /v1/account/user-account                                본인 계좌 전체조회
-Account	POST	     /v1/account/condition	                                 본인 계좌 단건 조회
+Account	POST       /v1/account/condition                                   본인 계좌 단건 조회
 Account	DELETE	   /v1/account	                                           계좌 연동 해지
 
-Transaction	POST	 /v1/account/tran	                                       거래내역 연동 (CODEF)
+Transaction	POST   /v1/account/tran	                                       거래내역 연동 (CODEF)
 Transaction	GET	   /v1/account/tran/all	                                   본인 거래내역 전체조회
-Transaction	POST	 /v1/account/tran/condition                              지출 내역 및 거래 데이터 조회
+Transaction	POST   /v1/account/tran/condition                              지출 내역 및 거래 데이터 조회
 Transaction	GET	   /v1/account/tran//tranList/{userId}                     백터화 시키키 위한 거래내역 정보
 
-BankCode POST	     /v1/account/bank	                                       은행코드 생성
+BankCode POST	   /v1/account/bank	                                       은행코드 생성
 
 BankItem POST      /v1/account/financial-products/deposit                  적금 상품 연동(금융감독원)
 BankItem POST      /v1/account/financial-products/saving                   예금 상품 연동(금융감독원)
