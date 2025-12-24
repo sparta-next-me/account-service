@@ -68,23 +68,33 @@
 ---
 
 ## API Endpoints
-```text
-Category           Method Endpoint	                                       Description
-Account	POST       /v1/account/create                                      신규 은행 계좌 연동 (CODEF)
-Account	GET	       /v1/account/user-account                                본인 계좌 전체조회
-Account	POST       /v1/account/condition                                   본인 계좌 단건 조회
-Account	DELETE	   /v1/account	                                           계좌 연동 해지
+### 계좌
+| Category | Method | Endpoint | Description |
+| :--- | :--- | :--- | :--- |
+| **Account** | POST | `/v1/account/create ` | 신규 은행 계좌 연동 (CODEF) |
+| **Account** | GET  | `/v1/account/user-account ` | 본인 계좌 전체조회 |
+| **Account** | POST | `/v1/account/condition` | 본인 계좌 단건 조회 |
+| **Account** | DELETE | `/v1/account` | 계좌 연동 해지 |
 
-Transaction	POST   /v1/account/tran	                                       거래내역 연동 (CODEF)
-Transaction	GET	   /v1/account/tran/all	                                   본인 거래내역 전체조회
-Transaction	POST   /v1/account/tran/condition                              지출 내역 및 거래 데이터 조회
-Transaction	GET	   /v1/account/tran//tranList/{userId}                     백터화 시키키 위한 거래내역 정보
+### 거래내역
+| Category | Method | Endpoint | Description |
+| :--- | :--- | :--- | :--- |
+| **Transaction** | POST | `/v1/account/tran` | 거래내역 연동 (CODEF) |
+| **Transaction** | GET | `/v1/account/tran/all` | 본인 거래내역 전체조회 |
+| **Transaction** | POST | `/v1/account/tran/condition` | 지출 내역 및 거래 데이터 조회 |
+| **Transaction** | GET | `/v1/account/tran//tranList/{userId} ` | 백터화 시키키 위한 거래내역 정보 |
 
-BankCode POST	   /v1/account/bank	                                       은행코드 생성
+### 은행코드
+| Category | Method | Endpoint | Description |
+| :--- | :--- | :--- | :--- |
+| **BankCode** | POST | `/v1/account/bank` | 은행코드 생성 |
 
-BankItem POST      /v1/account/financial-products/deposit                  적금 상품 연동(금융감독원)
-BankItem POST      /v1/account/financial-products/saving                   예금 상품 연동(금융감독원)
-BankItem GET       /v1/account/financial-products                          금융상품 전체조회 
-BankItem GET       /v1/account/financial-products/{bankCode}/{bankItemId}  해당 은행의 금융상품 단건 조회
-BankItem GET       /v1/account/financial-products/report                   백터화 시키키 위한 금융상품 정보
-```
+### 금융상품
+| Category | Method | Endpoint | Description |
+| :--- | :--- | :--- | :--- |
+| **BankItem** | POST | `/v1/account/financial-products/deposit   ` | 적금 상품 연동(금융감독원) |
+| **BankItem** | POST | `/v1/account/financial-products/saving ` | 예금 상품 연동(금융감독원)|
+| **BankItem** | GET | `/v1/account/financial-products  ` | 금융상품 전체조회  |
+| **BankItem** | GET | `/v1/account/financial-products/{bankCode}/{bankItemId}` | 해당 은행의 금융상품 단건 조회 |
+| **BankItem** | GET | `/v1/account/financial-products/report ` | 벡터화를 위한 금융 상품 데이터 추출 |
+
