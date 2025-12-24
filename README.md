@@ -2,6 +2,17 @@
 > 사용자가 여러 은행의 자산을 한곳에서 관리하고, 개인화된 금융 상품 추천(RAG)을 받을 수 있도록 돕는 서비스입니다. <br>
 > **전체 서비스 중 계좌 연동, 소비 데이터 수집, 금융 상품 RAG 파이프라인 구축 담당** > 외부 금융 API(CODEF, 금감원)를 활용하여 흩어진 자산 데이터를 통합하고, 분석 가능한 데이터로 가공하는 핵심 엔진을 개발했습니다.
 
+# 📑 목차
+1. [프로젝트 개요](#자산-금융상품-관리-api-backend)
+2. [기술 스택](#기술-스택)
+3. [담당 기능](#담당-기능)
+    * [계좌 및 자산 통합](#1-계좌-및-자산-통합)
+    * [소비 내역 분석](#2-소비-내역-분석)
+    * [금융 상품 파이프라인](#3-금융-상품-파이프라인-product)
+4. [ERD](#erd)
+5. [Technical Decision & Trouble Shooting](#technical-decision--trouble-shooting)
+6. [API Endpoints](#api-endpoints)
+
 
 ## 기술 스택
 - **Language**: Java 21 / Spring Boot 3.x
@@ -33,16 +44,7 @@
 # ERD
 ## <img width="828" height="538" alt="스크린샷 2025-12-24 오후 3 43 01" src="https://github.com/user-attachments/assets/aa7e1b40-631d-4041-afad-5e4961f48319" />
 ---
-# 폴더구조
 
-```text
-src/main/java/com/project/finance/
-├── account        # 계좌 연동 로직 (Connect/Delete/Sync)
-├── transaction    # 거래 내역 수집 및 지출 분류
-├── product        # 금융감독원 API 연동 및 상품 정보 관리
-├── feign          # RAG 서버 및 외부 API 통신 인터페이스 (OpenFeign)
-└── common         # 공통 예외 처리 및 유틸리티
-```
 
 # Technical Decision & Trouble Shooting
 ### [Technical Decision]
